@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>视频展示</title>
+    <script>
+        function checkPassword() {
+            const password = prompt("请输入密码：");
+            if (password !== "123") {
+                alert("密码错误！");
+                window.location.href = "/";
+                return false;
+            }
+            document.getElementById("content").style.display = "block";
+        }
+    </script>
+</head>
+<body onload="checkPassword()">
+    <div id="content" style="display:none;">
+        <h1>我的视频</h1>
+        <video controls style="max-width: 100%;">
+            <source src="/assets/videos/video1.mp4" type="video/mp4">
+            您的浏览器不支持HTML5视频标签。
+        </video>
+        <p>这是视频的描述文字。</p>
+    </div>
+</body>
+</html>
