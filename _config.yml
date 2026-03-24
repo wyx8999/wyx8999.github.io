@@ -11,7 +11,7 @@ keywords: 司机C的世界, 无聊的程序员
 timezone: Asia/Shanghai
 encoding: "utf-8"
 # 页面左下角显示的年份
-since: 2020
+since: 2018
 # 源码仓库，请替换成自己的
 repository: wyx8999/wyx8999.github.io
 # 对 css 和 js 资源的 cdn 加速配置
@@ -98,7 +98,14 @@ navs:
     href: /links/
     label: 链接
     mobile-hidden: true
+  -
+    href: /gallery.html
+    label: 照片
 
+  -
+    href: /videos.html
+    label: 视频
+    
   -
     href: /about/
     label: 关于
