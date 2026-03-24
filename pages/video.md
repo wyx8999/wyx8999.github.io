@@ -6,7 +6,7 @@ keywords: 视频,影音
 comments: false
 copyright: false
 menu: 视频
-permalink: /videos/
+permalink: /video/
 ---
 
 > 私人视频，输入密码查看
@@ -36,10 +36,10 @@ permalink: /videos/
 
 <div id="content">
   <div class="video-item">
-    <video controls src="/assets/video/文明你我他1.mp4"></video>
+    <video controls src="/assets/video/米修米修1.mp4"></video>
   </div>
   <div class="video-item">
-    <video controls src="/assets/video/米修米修1.mp4"></video>
+    <video controls src="/assets/video/文明你我他1.mp4"></video>
   </div>
   <div class="video-item">
     <video controls src="/assets/video/玖贰陆1.mp4"></video>
