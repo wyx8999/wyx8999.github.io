@@ -99,11 +99,11 @@ navs:
     label: 链接
     mobile-hidden: true
   -
-    href: /gallery.html
+    href: /photos/
     label: 照片
 
   -
-    href: /videos.html
+    href: /video/
     label: 视频
     
   -
