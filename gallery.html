@@ -1,27 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>照片展示</title>
-    <script>
-        function checkPassword() {
-            const password = prompt("请输入密码：");
-            if (password !== "123") {
-                alert("密码错误！");
-                window.location.href = "/";
-                return false;
-            }
-            document.getElementById("content").style.display = "block";
+    <meta charset="UTF-8">
+    <title>照片展示 | 司机C的世界</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
-    </script>
+        /* 顶部导航栏 */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px 40px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+        }
+        .logo-icon::after {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 10px;
+            width: 28px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-radius: 50% 50% 0 0;
+            border-bottom: none;
+        }
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            bottom: 10px;
+            left: 18px;
+            width: 12px;
+            height: 8px;
+            background: #fff;
+            border-radius: 0 0 50% 50%;
+        }
+        .nav {
+            margin-left: auto;
+            display: flex;
+            gap: 40px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #888;
+            font-size: 1.2rem;
+            padding: 8px 0;
+            position: relative;
+        }
+        .nav a.active {
+            color: #333;
+        }
+        .nav a.active::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #e67e22;
+        }
+        /* 横幅区域 */
+        .banner {
+            height: 240px;
+            background: linear-gradient(45deg, #6c3483 25%, #8e44ad 25%, #8e44ad 50%, #6c3483 50%, #6c3483 75%, #8e44ad 75%, #8e44ad 100%);
+            background-size: 40px 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            color: #fff;
+            font-size: 3rem;
+            font-weight: 300;
+        }
+        /* 内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .photo-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .photo-item:hover {
+            transform: translateY(-4px);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+        /* 密码弹窗样式优化 */
+        dialog {
+            border: none;
+            border-radius: 12px;
+            padding: 24px;
+            width: 360px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        dialog::backdrop {
+            background: rgba(0,0,0,0.4);
+        }
+        .dialog-title {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: #333;
+        }
+        .dialog-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+        .dialog-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .dialog-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .dialog-btn.cancel {
+            background: #eee;
+            color: #333;
+        }
+        .dialog-btn.confirm {
+            background: #8e44ad;
+            color: #fff;
+        }
+        .error-tip {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+    </style>
 </head>
-<body onload="checkPassword()">
-    <div id="content" style="display:none;">
-        <h1>我的照片集</h1>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-            <img src="/assets/photos/hello_hebe1.jpg" alt="hello_hebe" style="width: 100%;">
-            <img src="/assets/photos/吃饭很香1.jpg" alt="吃饭很香" style="width: 100%;">
-            <img src="/assets/photos/馨雅1.jpg" alt="馨雅" style="width: 100%;">
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            司机C的世界
+        </div>
+        <nav class="nav">
+            <a href="/">首页</a>
+            <a href="/category">分类</a>
+            <a href="/archive">归档</a>
+            <a href="/opensource">开源</a>
+            <a href="/snippet">片段</a>
+            <a href="/wiki">维基</a>
+            <a href="/links">链接</a>
+            <a href="/photos" class="active">照片</a>
+            <a href="/videos">视频</a>
+            <a href="/about">关于</a>
+        </nav>
+    </header>
+
+    <div class="banner">
+        照片
+    </div>
+
+    <div id="content" class="container" style="display:none;">
+        <h1 style="font-size: 1.8rem; margin-bottom: 24px; color: #333;">我的照片集</h1>
+        <div class="photo-grid">
+            <div class="photo-item">
+                <img src="/assets/photos/hello_hebe1.jpg" alt="hello_hebe">
+            </div>
+            <div class="photo-item">
+                <img src="/assets/photos/吃饭很香1.jpg" alt="吃饭很香">
+            </div>
+            <div class="photo-item">
+                <img src="/assets/photos/馨雅1.jpg" alt="馨雅">
+            </div>
         </div>
     </div>
+
+    <dialog id="passwordDialog">
+        <div class="dialog-title">请输入密码查看照片</div>
+        <div class="error-tip" id="errorTip">密码错误，请重试！</div>
+        <input type="password" class="dialog-input" id="passwordInput" placeholder="请输入密码">
+        <div class="dialog-buttons">
+            <button class="dialog-btn cancel" onclick="closeDialog()">取消</button>
+            <button class="dialog-btn confirm" onclick="verifyPassword()">确定</button>
+        </div>
+    </dialog>
+
+    <script>
+        const dialog = document.getElementById('passwordDialog');
+        const content = document.getElementById('content');
+        const errorTip = document.getElementById('errorTip');
+        const passwordInput = document.getElementById('passwordInput');
+
+        // 页面加载时显示密码弹窗
+        window.addEventListener('load', () => {
+            dialog.showModal();
+        });
+
+        function closeDialog() {
+            dialog.close();
+            window.location.href = "/";
+        }
+
+        function verifyPassword() {
+            const password = passwordInput.value;
+            if (password !== "123") {
+                errorTip.style.display = "block";
+                passwordInput.value = "";
+                passwordInput.focus();
+                return;
+            }
+            dialog.close();
+            content.style.display = "block";
+        }
+    </script>
 </body>
 </html>
