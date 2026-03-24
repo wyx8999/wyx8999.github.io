@@ -39,7 +39,7 @@ permalink: /video/
     <video controls src="/assets/video/文明你我他1.mp4"></video>
   </div>
   <div class="video-item">
-    <video controls src="/assets/video/米修米修.mp4"></video>
+    <video controls src="/assets/video/冷酷的文儿.mp4"></video>
   </div>
   <div class="video-item">
     <video controls src="/assets/video/(玖贰陆（佛系更新）)🥯_780367cb71435e4823f91c8347435de1.mp4"></video>
