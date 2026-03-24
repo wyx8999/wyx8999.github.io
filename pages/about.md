@@ -23,7 +23,7 @@ permalink: /about/
 {% if site.url contains 'zxy6.indevs.in' %}
 <li>
 微信公众号：<br />
-<img style="height:192px;width:192px;border:1px solid lightgrey;" src="{{ site.url }}/assets/images/qrcode.jpg" alt="程序员" />
+<img style="height:192px;width:192px;border:1px solid lightgrey;" src="{{ site.url }}/assets/images/qrcode1.jpg" alt="程序员" />
 </li>
 {% endif %}
 </ul>
