@@ -9,7 +9,7 @@ menu: 照片
 permalink: /photos/
 ---
 
-> 私人相册，输入密码查看
+> 私藏岁月，静赏芳华。
 
 <style>
   #content { display: none; }
