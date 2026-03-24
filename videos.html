@@ -2,6 +2,20 @@
 <html>
 <head>
     <title>视频展示</title>
+    <style>
+        /* 简单美化一下，让视频排版更好看 */
+        .video-item {
+            margin: 30px 0;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        video, iframe {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+    </style>
     <script>
         function checkPassword() {
             const password = prompt("请输入密码：");
@@ -16,12 +30,69 @@
 </head>
 <body onload="checkPassword()">
     <div id="content" style="display:none;">
-        <h1>我的视频</h1>
-        <video controls style="max-width: 100%;">
-            <source src="/assets/videos/video1.mp4" type="video/mp4">
-            您的浏览器不支持HTML5视频标签。
-        </video>
-        <p>这是视频的描述文字。</p>
+        <h1>我的视频合集</h1>
+
+        <!-- ============= 1. 本地视频 1 ============= -->
+        <div class="video-item">
+            <h3>本地视频 1</h3>
+            <video controls>
+                <source src="/assets/video/文明你我他1.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频。
+            </video>
+            <p>文明你我他</p>
+        </div>
+
+        <!-- ============= 2. 本地视频 2 ============= -->
+        <div class="video-item">
+            <h3>本地视频 2</h3>
+            <video controls>
+                <source src="/assets/video/米修米修1.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频。
+            </video>
+            <p>米修</p>
+        </div>
+
+        <!-- ============= 3. 本地视频 3 ============= -->
+        <div class="video-item">
+            <h3>本地视频 3</h3>
+            <video controls>
+                <source src="/assets/video/玖贰陆1.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频。
+            </video>
+            <p>玖贰陆</p>
+        </div>
+        
+        <!-- ============= 3. YouTube 视频 1 ============= -->
+        <div class="video-item">
+            <h3>YouTube 视频 1</h3>
+            <!-- 把 src 里的视频ID换成你自己的 -->
+            <iframe 
+                width="560" 
+                height="315" 
+                src="https://www.youtube.com/embed/你的YouTube视频ID"
+                title="YouTube视频"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+            <p>YouTube 视频描述</p>
+        </div>
+
+        <!-- ============= 4. YouTube 视频 2 ============= -->
+        <div class="video-item">
+            <h3>YouTube 视频 2</h3>
+            <iframe 
+                width="560" 
+                height="315" 
+                src="https://www.youtube.com/embed/第二个YouTube视频ID"
+                title="YouTube视频"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+            <p>第二个YouTube视频描述</p>
+        </div>
+
     </div>
 </body>
 </html>
