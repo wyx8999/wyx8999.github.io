@@ -5,9 +5,9 @@ baseurl:
 url: https://zxy6.indevs.in
 date_format: "ordinal"
 title: 司机C的世界
-subtitle: "司机C智造空间"
+subtitle: "司机c智造空间"
 description: "个人博客"
-keywords: 司机C的世界, 无聊的程序员
+keywords: 司机c的世界, 无聊的程序员
 timezone: Asia/Shanghai
 encoding: "utf-8"
 # 页面左下角显示的年份
