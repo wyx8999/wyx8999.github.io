@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>照片展示</title>
+    <script>
+        function checkPassword() {
+            const password = prompt("请输入密码：");
+            if (password !== "123") {
+                alert("密码错误！");
+                window.location.href = "/";
+                return false;
+            }
+            document.getElementById("content").style.display = "block";
+        }
+    </script>
+</head>
+<body onload="checkPassword()">
+    <div id="content" style="display:none;">
+        <h1>我的照片集</h1>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <img src="/assets/images/photo1.jpg" alt="照片1" style="width: 100%;">
+            <img src="/assets/images/photo2.jpg" alt="照片2" style="width: 100%;">
+            <img src="/assets/images/photo3.jpg" alt="照片3" style="width: 100%;">
+        </div>
+    </div>
+</body>
+</html>
