@@ -9,7 +9,7 @@ menu: 视频
 permalink: /video/
 ---
 
-> 私人视频，输入密码查看
+> 藏时光一隅，盼君轻启。
 
 <style>
   #content { display: none; }
