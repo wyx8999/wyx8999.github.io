@@ -47,11 +47,14 @@ layout: default
           }
           .photo-sidebar {
             width: 240px;
-            padding: 15px 20px;
+            padding: 0; /* 修改：移除左右内边距，让内容对齐 */
             background: #fafafa;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,.05);
             font-size: 14px;
+          }
+          .photo-search {
+            padding: 15px 20px; /* 搜索框单独添加内边距 */
           }
           .photo-search input {
             width: 100%;
@@ -97,12 +100,31 @@ layout: default
             border-radius: 8px;
           }
 
-          .tag-title, .album-title { font-size: 15px; font-weight: 500; margin: 14px 0 8px; }
-          .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+          .tag-title, .album-title { 
+            font-size: 15px; 
+            font-weight: 500; 
+            margin: 14px 20px 8px; /* 统一左右内边距，与搜索框对齐 */
+          }
+          .tag-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            margin: 0 20px 14px; /* 统一左右内边距，与搜索框对齐 */
+          }
           .tag { padding: 4px 9px; background: #f3f3f3; border-radius: 12px; font-size: 13px; cursor: pointer; }
           .tag.active, .tag:hover { background: #555; color: #fff; }
-          .album-item { padding: 6px 10px; background: #f7f7f7; border-radius: 6px; margin-bottom: 6px; cursor: pointer; font-size: 14px; }
+          .album-item { 
+            padding: 6px 10px; 
+            background: #f7f7f7; 
+            border-radius: 6px; 
+            margin-bottom: 6px; 
+            cursor: pointer; 
+            font-size: 14px; 
+          }
           .album-item.active, .album-item:hover { background: #555; color: #fff; }
+          .album-list {
+            margin: 0 20px; /* 统一左右内边距，与搜索框对齐 */
+          }
 
           /* --------- 响应式 --------- */
           @media(max-width: 768px) {
