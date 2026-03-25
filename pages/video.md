@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: wiki
 title: 视频展示
 description: 我的私人视频集
 keywords: 视频,影音
@@ -9,6 +9,7 @@ menu: 视频
 permalink: /video/
 ---
 > 藏时光一隅，盼君轻启。
+
 
 <style>
 #content { display: none; }
