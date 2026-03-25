@@ -38,20 +38,30 @@ layout: default
 .video-container {
   margin-top: 20px;
   display: flex;
-  gap: 25px;
+  gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 .video-main {
   flex: 1;
-  min-width: 550px;
+  min-width: 0;
+  width: 100%;
 }
 .video-sidebar {
   width: 240px;
-  padding: 15px 20px;
+  padding: 15px;
   background: #fafafa;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   font-size: 14px;
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .video-sidebar {
+    width: 100% !important;
+    margin-top: 10px;
+  }
 }
 .video-search input {
   width: 100%;
@@ -60,10 +70,13 @@ layout: default
   border-radius: 6px;
   outline: none;
   font-size: 14px;
+  box-sizing: border-box;
 }
 .video-list {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
+  width: 100%;
 }
 .video-card {
   border-radius: 8px;
@@ -71,11 +84,16 @@ layout: default
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   cursor: pointer;
+  transition: transform 0.2s;
+}
+.video-card:hover {
+  transform: scale(1.02);
 }
 .video-cover {
   width: 100%;
   aspect-ratio: 16/9;
   object-fit: cover;
+  display: block;
 }
 .video-info {
   padding: 10px 12px;
@@ -89,21 +107,29 @@ layout: default
   font-size: 13px;
   color: #666;
 }
+
 .video-modal {
   display: none;
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0,0,0,0.85);
   z-index: 9999;
   align-items: center;
   justify-content: center;
+  padding: 15px;
+  box-sizing: border-box;
 }
 .video-modal.show { display: flex; }
 .modal-video {
-  width: 90%;
-  max-width: 1000px;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 16/9;
   border-radius: 8px;
+  background: #000;
 }
+
 .tag-title, .album-title {
   font-size: 15px;
   font-weight: 500;
@@ -121,6 +147,7 @@ layout: default
   border-radius: 12px;
   font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .tag.active, .tag:hover {
   background: #555;
@@ -161,11 +188,11 @@ layout: default
   <iframe class="modal-video" id="modalVideo" frameborder="0" allowfullscreen></iframe>
 </div>
 
-<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px;">
+<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px; max-width:90%; box-sizing:border-box;">
   请输入密码查看视频
   <div id="errorTip" style="color:red; font-size:12px; display:none;">密码错误</div>
-  <input type="password" id="passwordInput" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ddd; border-radius:6px;">
-  <div style="display:flex; justify-content:flex-end; gap:10px;">
+  <input type="password" id="passwordInput" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ddd; border-radius:6px; box-sizing:border-box;">
+  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
     <button onclick="closeDialog()">取消</button>
     <button onclick="verifyPassword()">确定</button>
   </div>
@@ -181,8 +208,16 @@ const videoModal = document.getElementById("videoModal");
 const modalVideo = document.getElementById("modalVideo");
 let currentFilter = { album: "all", tag: "all", search: "" };
 
-function openModal(src) { modalVideo.src = src; videoModal.classList.add("show"); }
-function closeModal() { videoModal.classList.remove("show"); modalVideo.src = ""; }
+function openModal(src) {
+  modalVideo.src = src;
+  videoModal.classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  videoModal.classList.remove("show");
+  modalVideo.src = "";
+  document.body.style.overflow = "";
+}
 
 function renderVideos() {
   videoList.innerHTML = "";
@@ -194,7 +229,7 @@ function renderVideos() {
     const div = document.createElement("div");
     div.className = "video-card";
     div.innerHTML = `
-      <img src="${v.cover}" class="video-cover" alt="${v.title}">
+      <img src="${v.cover}" class="video-cover" alt="${v.title}" loading="lazy">
       <div class="video-info">
         <div class="video-title">${v.title}</div>
         <div class="video-desc">${v.desc || ''}</div>
@@ -235,15 +270,26 @@ searchInput.addEventListener("input", e => {
   renderVideos();
 });
 
-renderVideos(); renderTags(); renderAlbums();
+renderVideos();
+renderTags();
+renderAlbums();
 
 const dialog = document.getElementById('passwordDialog');
 const content = document.getElementById('content');
 window.onload = () => dialog.showModal();
-function closeDialog() { dialog.close(); }
+
+function closeDialog() {
+  dialog.close();
+}
+
 function verifyPassword() {
-  if (passwordInput.value === '{{ page.password }}') { dialog.close(); content.style.display = 'block'; }
-  else { errorTip.style.display = 'block'; passwordInput.value = ''; }
+  if (passwordInput.value === '{{ page.password }}') {
+    dialog.close();
+    content.style.display = 'block';
+  } else {
+    errorTip.style.display = 'block';
+    passwordInput.value = '';
+  }
 }
 </script>
 
