@@ -1,5 +1,5 @@
 ---
-layout: wiki
+layout: photos
 title: 照片展示
 description: 我的私人照片集
 keywords: 照片,相册
