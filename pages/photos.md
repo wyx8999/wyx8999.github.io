@@ -9,7 +9,6 @@ menu: 照片
 permalink: /photos/
 password: 123
 
-
 photos:
   - src: "/assets/photos/hello_hebe1.jpg"
     alt: "Hebe"
