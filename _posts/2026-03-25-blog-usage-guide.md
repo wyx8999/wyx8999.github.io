@@ -2,7 +2,8 @@
 layout: post
 title: 博客使用指南
 categories: 教程
-tags: 教程
+description: 博客的基本使用指南
+keywords 使用 , 指南 
 topmost: true
 ---
 
