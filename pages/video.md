@@ -1,5 +1,5 @@
 ---
-layout: wiki
+layout: gallery
 title: 视频展示
 description: 我的私人视频集
 keywords: 视频,影音
