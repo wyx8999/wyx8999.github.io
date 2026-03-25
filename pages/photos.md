@@ -33,7 +33,7 @@ photos:
   - src: "/assets/photos/1-欢-城北的花开了几个冬夏_城南的你还好吗#这-20260307190952.jpg"
     alt: "欢"
     album: "欢"
-    tags: [""眼镜"]
+    tags: ["眼镜"]
   - src: "/assets/photos/1-那咋了-。#穿搭_#正常穿搭无不良价值观导向-20260113151227.jpg"
     alt: "吃饭很香"
     album: "吃饭很香"
