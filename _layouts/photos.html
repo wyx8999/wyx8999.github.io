@@ -38,44 +38,62 @@ layout: default
 .photo-container {
   margin-top: 20px;
   display: flex;
-  gap: 25px;
+  gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
 }
 .photo-main {
   flex: 1;
-  min-width: 550px;
+  min-width: 280px !important;
+  width: 100%;
 }
 .photo-sidebar {
-  width: 240px;
-  padding: 15px 20px;
+  width: 100%;
+  max-width: 280px;
+  padding: 15px;
   background: #fafafa;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   font-size: 14px;
+  box-sizing: border-box;
+}
+@media (max-width: 768px) {
+  .photo-sidebar {
+    max-width: 100%;
+    margin-top: 10px;
+  }
 }
 .photo-search input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px;
   border: 1px solid #eee;
   border-radius: 6px;
   outline: none;
-  font-size: 14px;
+  font-size: 15px;
+  box-sizing: border-box;
 }
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+@media (max-width: 500px) {
+  .photo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
 }
 .photo-item {
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   transition: transform 0.2s;
 }
 .photo-item:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 .photo-item img {
   width: 100%;
@@ -85,17 +103,20 @@ layout: default
 .photo-modal {
   display: none;
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75);
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.85);
   z-index: 9999;
   align-items: center;
   justify-content: center;
 }
 .photo-modal.show { display: flex; }
 .photo-modal img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
+  max-width: 95%;
+  max-height: 95vh;
+  border-radius: 10px;
+  object-fit: contain;
 }
 .tag-title, .album-title {
   font-size: 15px;
@@ -109,18 +130,19 @@ layout: default
   margin-bottom: 14px;
 }
 .tag {
-  padding: 4px 9px;
+  padding: 5px 10px;
   background: #f3f3f3;
   border-radius: 12px;
   font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .tag.active, .tag:hover {
   background: #555;
   color: #fff;
 }
 .album-item {
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: #f7f7f7;
   border-radius: 6px;
   margin-bottom: 6px;
@@ -154,13 +176,13 @@ layout: default
   <img id="modalImg">
 </div>
 
-<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px;">
+<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px; max-width:90%; width:320px;">
   请输入密码查看照片
-  <div id="errorTip" style="color:red; font-size:12px; display:none;">密码错误</div>
-  <input type="password" id="passwordInput" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ddd; border-radius:6px;">
-  <div style="display:flex; justify-content:flex-end; gap:10px;">
-    <button onclick="closeDialog()">取消</button>
-    <button onclick="verifyPassword()">确定</button>
+  <div id="errorTip" style="color:red; font-size:12px; display:none; margin-top:8px;">密码错误</div>
+  <input type="password" id="passwordInput" style="width:100%; margin:12px 0; padding:10px; border:1px solid #ddd; border-radius:6px; box-sizing:border-box;">
+  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:5px;">
+    <button onclick="closeDialog()" style="padding:6px 12px;">取消</button>
+    <button onclick="verifyPassword()" style="padding:6px 12px;">确定</button>
   </div>
 </dialog>
 
@@ -186,7 +208,7 @@ function renderPhotos() {
   ).forEach(p => {
     const div = document.createElement("div");
     div.className = "photo-item";
-    div.innerHTML = `<img src="${p.src}" alt="${p.alt}">`;
+    div.innerHTML = `<img src="${p.src}" alt="${p.alt}" loading="lazy">`;
     div.onclick = () => openModal(p.src);
     photoGrid.appendChild(div);
   });
@@ -229,8 +251,13 @@ const content = document.getElementById('content');
 window.onload = () => dialog.showModal();
 function closeDialog() { dialog.close(); }
 function verifyPassword() {
-  if (passwordInput.value === '{{ page.password }}') { dialog.close(); content.style.display = 'block'; }
-  else { errorTip.style.display = 'block'; passwordInput.value = ''; }
+  if (passwordInput.value === '{{ page.password }}') {
+    dialog.close();
+    content.style.display = 'block';
+  } else {
+    errorTip.style.display = 'block';
+    passwordInput.value = '';
+  }
 }
 </script>
 
@@ -244,7 +271,9 @@ function verifyPassword() {
       {% include comments.html %}
     </div>
   </div>
-  <div class="column one-fourth">
+
+  <!-- 侧边栏在手机自动隐藏，避免报错 -->
+  <div class="column one-fourth mobile-hidden">
     {% include sidebar-search.html %}
     {% include sidebar-post-nav.html %}
     {% include sidebar-detail-ad.html %}
