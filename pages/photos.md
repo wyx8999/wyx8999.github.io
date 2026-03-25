@@ -241,20 +241,20 @@ const photos = [
   {
     src: "/assets/photos/hello_hebe1.jpg",
     alt: "Hebe",
-    album: "生活",
-    tags: ["人物", "日常"]
+    album: "hello_hebe",
+    tags: ["瑜伽裤"]
   },
   {
     src: "/assets/photos/吃饭很香1.jpg",
-    alt: "美食",
-    album: "美食",
-    tags: ["美食", "生活"]
+    alt: "吃饭很香",
+    album: "吃饭姐",
+    tags: ["反差", "眼镜"]
   },
   {
     src: "/assets/photos/馨雅1.jpg",
     alt: "馨雅",
-    album: "生活",
-    tags: ["人物", "旅行"]
+    album: "馨雅",
+    tags: ["反差", "调","AI"]
   }
 ];
 // ==================================================================
