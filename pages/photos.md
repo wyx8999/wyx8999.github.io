@@ -9,48 +9,51 @@ menu: 照片
 permalink: /photos/
 ---
 
-
 > 私藏岁月，静赏芳华。
 
 <style>
 #content { display: none; }
+/* 核心布局：左侧照片 + 右侧侧边栏 */
 .photo-container {
   margin-top: 20px;
   display: flex;
   gap: 25px;
-  flex-wrap: wrap;
-  /* 让侧边栏在右侧，主内容在左侧 */
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+  /* 固定左右布局，不换行 */
+  flex-wrap: nowrap;
+  align-items: flex-start;
 }
+/* 左侧照片区域 */
 .photo-main {
-  /* 主内容占剩余空间，侧边栏固定宽度 */
   flex: 1;
-  min-width: 300px; /* 降低最小宽度，适配手机 */
+  min-width: 0; /* 解决flex缩放问题 */
 }
+/* 右侧侧边栏：搜索+标签+合集 */
 .photo-sidebar {
-  width: 280px;
-  padding: 15px 20px;
+  width: 260px;
+  flex-shrink: 0; /* 固定宽度不被挤压 */
+  padding: 18px 20px;
   background: #fafafa;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   font-size: 14px;
-  /* 侧边栏在小屏幕自动占满宽度 */
-  flex-shrink: 0;
+  position: sticky;
+  top: 20px;
 }
+/* 搜索框 */
 .photo-search input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border: 1px solid #eee;
   border-radius: 6px;
   outline: none;
   font-size: 14px;
-  box-sizing: border-box; /* 防止输入框溢出 */
+  box-sizing: border-box;
+  margin-bottom: 18px;
 }
+/* 照片网格 */
 .photo-grid {
   display: grid;
-  /* 响应式网格：自动填充，最小宽度150px，最大1fr */
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 14px;
 }
 .photo-item {
@@ -69,6 +72,7 @@ permalink: /photos/
   height: 100%;
   object-fit: cover;
 }
+/* 弹窗样式 */
 .photo-modal {
   display: none;
   position: fixed;
@@ -84,19 +88,20 @@ permalink: /photos/
   max-height: 90%;
   border-radius: 8px;
 }
+/* 标签&合集样式 */
 .tag-title, .album-title {
   font-size: 15px;
   font-weight: 500;
-  margin: 14px 0 8px;
+  margin: 0 0 10px;
 }
 .tag-list {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 .tag {
-  padding: 4px 9px;
+  padding: 5px 10px;
   background: #f3f3f3;
   border-radius: 12px;
   font-size: 13px;
@@ -107,10 +112,10 @@ permalink: /photos/
   color: #fff;
 }
 .album-item {
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: #f7f7f7;
   border-radius: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   cursor: pointer;
   font-size: 14px;
 }
@@ -119,47 +124,31 @@ permalink: /photos/
   color: #fff;
 }
 
-/* ========== 响应式适配：解决不同设备排版问题 ========== */
-/* 平板/小屏幕（≤ 1024px） */
-@media screen and (max-width: 1024px) {
+/* ========== 响应式适配：手机/平板自动调整 ========== */
+@media (max-width: 768px) {
   .photo-container {
-    flex-direction: column; /* 垂直排列，侧边栏在顶部 */
+    flex-direction: column;
+    gap: 20px;
   }
   .photo-sidebar {
-    width: 100%; /* 侧边栏占满宽度 */
+    width: 100%;
     box-sizing: border-box;
+    position: static;
   }
-  .photo-main {
-    min-width: 100%;
-  }
-}
-
-/* 手机屏幕（≤ 768px） */
-@media screen and (max-width: 768px) {
   .photo-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* 缩小卡片尺寸 */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 10px;
-  }
-  .photo-sidebar {
-    padding: 12px 15px;
-  }
-  .photo-container {
-    gap: 15px;
-  }
-}
-
-/* 超小屏幕（≤ 480px） */
-@media screen and (max-width: 480px) {
-  .photo-grid {
-    grid-template-columns: repeat(2, 1fr); /* 固定2列，避免过挤 */
-    gap: 8px;
   }
 }
 </style>
 
 <div id="content">
   <div class="photo-container">
-    <!-- 侧边栏（搜索+标签+合集）移到右侧 -->
+    <!-- 左侧：照片内容 -->
+    <div class="photo-main">
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+    <!-- 右侧：搜索 + 标签 + 合集 -->
     <div class="photo-sidebar">
       <div class="photo-search">
         <input type="text" id="searchInput" placeholder="搜索照片/标签/合集">
@@ -169,10 +158,6 @@ permalink: /photos/
       <div class="album-title">合集</div>
       <div class="album-list" id="albumList"></div>
     </div>
-    <!-- 主内容（照片网格）在左侧 -->
-    <div class="photo-main">
-      <div class="photo-grid" id="photoGrid"></div>
-    </div>
   </div>
 </div>
 
@@ -180,11 +165,11 @@ permalink: /photos/
   <img id="modalImg">
 </div>
 
-<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px; max-width:90vw;">
+<dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px;">
   请输入密码查看照片
-  <div id="errorTip" style="color:red; font-size:12px; display:none; margin-top:8px;">密码错误</div>
-  <input type="password" id="passwordInput" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ddd; border-radius:6px; box-sizing:border-box;">
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+  <div id="errorTip" style="color:red; font-size:12px; display:none;">密码错误</div>
+  <input type="password" id="passwordInput" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ddd; border-radius:6px;">
+  <div style="display:flex; justify-content:flex-end; gap:10px;">
     <button onclick="closeDialog()">取消</button>
     <button onclick="verifyPassword()">确定</button>
   </div>
