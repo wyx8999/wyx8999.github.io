@@ -12,48 +12,94 @@ permalink: /photos/
 > 私藏岁月，静赏芳华。
 
 <style>
-#content { display: none; }
-/* 核心布局：左侧照片 + 右侧侧边栏 */
+/* ① 先隐藏内容，等弹窗关闭后再显示 */
+#content { 
+  display: none; 
+  overflow-y: auto;   /* 让滚动条仅在内容区出现 */
+  padding: 20px;
+}
+
+/* ② 主容器 */
 .photo-container {
-  margin-top: 20px;
   display: flex;
-  gap: 25px;
-  /* 固定左右布局，不换行 */
-  flex-wrap: nowrap;
-  align-items: flex-start;
+  flex-wrap: wrap;            /* 允许换行（手机端） */
+  gap: 20px;
 }
-/* 左侧照片区域 */
+
+/* ③ 照片区域（左侧） */
 .photo-main {
-  flex: 1;
-  min-width: 0; /* 解决flex缩放问题 */
+  flex: 1 1 0;               /* 可伸缩，优先占据剩余空间 */
+  min-width: 0;              /* 让 flex 子元素可完全收缩 */
+  padding: 0;
 }
-/* 右侧侧边栏：搜索+标签+合集 */
+
+/* ④ 右侧搜索/标签/合集容器 */
 .photo-sidebar {
-  width: 260px;
-  flex-shrink: 0; /* 固定宽度不被挤压 */
-  padding: 18px 20px;
+  width: 260px;             /* 固定宽度，桌面端右侧 */
+  flex-shrink: 0;          /* 不收缩 */
+  padding: 15px 20px;
   background: #fafafa;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  font-size: 14px;
-  position: sticky;
-  top: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-/* 搜索框 */
+
+/* ⑤ 搜索框 */
 .photo-search input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid #eee;
   border-radius: 6px;
   outline: none;
   font-size: 14px;
-  box-sizing: border-box;
-  margin-bottom: 18px;
 }
-/* 照片网格 */
+
+/* ⑥ 统一标题样式 */
+.tag-title,
+.album-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 14px 0 8px;
+}
+
+/* ⑦ 标签列表 */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.tag {
+  padding: 4px 9px;
+  background: #f3f3f3;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tag.active,
+.tag:hover {
+  background: #555;
+  color: #fff;
+}
+
+/* ⑧ 合集列表 */
+.album-item {
+  padding: 6px 10px;
+  background: #f7f7f7;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.album-item.active,
+.album-item:hover {
+  background: #555;
+  color: #fff;
+}
+
+/* ⑨ 照片网格 */
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 14px;
 }
 .photo-item {
@@ -61,94 +107,45 @@ permalink: /photos/
   border-radius: 6px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  transition: transform .2s;
 }
-.photo-item:hover {
-  transform: scale(1.02);
-}
+.photo-item:hover { transform: scale(1.02); }
 .photo-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-/* 弹窗样式 */
-.photo-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-.photo-modal.show { display: flex; }
-.photo-modal img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
-}
-/* 标签&合集样式 */
-.tag-title, .album-title {
-  font-size: 15px;
-  font-weight: 500;
-  margin: 0 0 10px;
-}
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 20px;
-}
-.tag {
-  padding: 5px 10px;
-  background: #f3f3f3;
-  border-radius: 12px;
-  font-size: 13px;
-  cursor: pointer;
-}
-.tag.active, .tag:hover {
-  background: #555;
-  color: #fff;
-}
-.album-item {
-  padding: 8px 12px;
-  background: #f7f7f7;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.album-item.active, .album-item:hover {
-  background: #555;
-  color: #fff;
+  width: 100%; height: 100%; object-fit: cover;
 }
 
-/* ========== 响应式适配：手机/平板自动调整 ========== */
-@media (max-width: 768px) {
-  .photo-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-  .photo-sidebar {
-    width: 100%;
-    box-sizing: border-box;
-    position: static;
-  }
-  .photo-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-  }
+/* ⑩ 模态窗 */
+.photo-modal { 
+  display: none; 
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+  background: rgba(0,0,0,.75); z-index: 9999; 
+  align-items:center; justify-content:center; 
+}
+.photo-modal.show { display: flex; }
+.photo-modal img { max-width:90%; max-height:90%; border-radius:8px;}
+
+/* ⑪ 密码弹窗样式的细调（保持与原 dialog 兼容） */
+#passwordDialog { 
+  border: none; border-radius:8px; padding:25px; 
+}
+
+/* ⑫ 媒体查询：在 768px 以下做垂直排布 */
+@media (max-width:768px) {
+  .photo-container { flex-direction: column; }
+  .photo-sidebar { width: 100%; }
+  .photo-main { width: 100%; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }
 </style>
 
 <div id="content">
   <div class="photo-container">
-    <!-- 左侧：照片内容 -->
+    <!-- ① 照片主区 -->
     <div class="photo-main">
       <div class="photo-grid" id="photoGrid"></div>
     </div>
-    <!-- 右侧：搜索 + 标签 + 合集 -->
+    <!-- ② 右侧搜索、标签、合集 -->
     <div class="photo-sidebar">
       <div class="photo-search">
         <input type="text" id="searchInput" placeholder="搜索照片/标签/合集">
@@ -161,10 +158,12 @@ permalink: /photos/
   </div>
 </div>
 
+<!-- ③ 模态窗 -->
 <div class="photo-modal" id="photoModal" onclick="closeModal()">
   <img id="modalImg">
 </div>
 
+<!-- ④ 密码弹窗 -->
 <dialog id="passwordDialog" style="border:none; border-radius:8px; padding:25px;">
   请输入密码查看照片
   <div id="errorTip" style="color:red; font-size:12px; display:none;">密码错误</div>
@@ -176,76 +175,103 @@ permalink: /photos/
 </dialog>
 
 <script>
+// --- ① 数据定义（可按需自行扩展） ---
 const photos = [
   { src: "/assets/photos/hello_hebe1.jpg", alt: "Hebe", album: "生活", tags: ["人物","日常"] },
   { src: "/assets/photos/吃饭很香1.jpg", alt: "美食", album: "美食", tags: ["美食","生活"] },
-  { src: "/assets/photos/馨雅1.jpg", alt: "馨雅", album: "生活", tags: ["人物","旅行"] }
+  { src: "/assets/photos/馨雅1.jpg", alt: "馨雅", album: "生活", tags: ["人物","旅行"] },
+  // 继续添加...
 ];
 
-const photoGrid = document.getElementById("photoGrid");
-const tagList = document.getElementById("tagList");
-const albumList = document.getElementById("albumList");
+// --- ② 取引用 ---
+const photoGrid   = document.getElementById("photoGrid");
+const tagList     = document.getElementById("tagList");
+const albumList   = document.getElementById("albumList");
 const searchInput = document.getElementById("searchInput");
-const photoModal = document.getElementById("photoModal");
-const modalImg = document.getElementById("modalImg");
-let currentFilter = { album: "all", tag: "all", search: "" };
+const photoModal  = document.getElementById("photoModal");
+const modalImg    = document.getElementById("modalImg");
+const dialog      = document.getElementById('passwordDialog');
+const content     = document.getElementById('content');
+const errorTip    = document.getElementById('errorTip');
+const passwordInput = document.getElementById('passwordInput');
 
-function openModal(src) { modalImg.src = src; photoModal.classList.add("show"); }
-function closeModal() { photoModal.classList.remove("show"); }
+// --- ③ 过滤状态 ---
+let currentFilter = { album:"all", tag:"all", search:"" };
 
-function renderPhotos() {
+// --- ④ 模态窗 ---
+function openModal(src){ modalImg.src = src; photoModal.classList.add('show'); }
+function closeModal(){ photoModal.classList.remove('show'); }
+
+// --- ⑤ 渲染照片 ---
+function renderPhotos(){
   photoGrid.innerHTML = "";
   photos.filter(p =>
-    (currentFilter.album === "all" || p.album === currentFilter.album) &&
-    (currentFilter.tag === "all" || p.tags.includes(currentFilter.tag)) &&
-    (!currentFilter.search || p.alt.toLowerCase().includes(currentFilter.search.toLowerCase()))
-  ).forEach(p => {
-    const div = document.createElement("div");
-    div.className = "photo-item";
-    div.innerHTML = `<img src="${p.src}" alt="${p.alt}">`;
-    div.onclick = () => openModal(p.src);
-    photoGrid.appendChild(div);
+      (currentFilter.album === "all" || p.album === currentFilter.album) &&
+      (currentFilter.tag === "all" || p.tags.includes(currentFilter.tag)) &&
+      (!currentFilter.search || p.alt.toLowerCase().includes(currentFilter.search.toLowerCase()))
+  ).forEach(p=>{
+      const div   = document.createElement("div");
+      div.class   = "photo-item";
+      div.innerHTML = `<img src="${p.src}" alt="${p.alt}">`;
+      div.onclick = ()=>openModal(p.src);
+      photoGrid.appendChild(div);
   });
 }
 
-function getAlbums() { return ["all", ...new Set(photos.map(p => p.album))]; }
-function getTags() { return ["all", ...new Set(photos.flatMap(p => p.tags))]; }
+// --- ⑥ 获取唯一合集与标签 ---
+function getAlbums(){ return ["all", ...new Set(photos.map(p=>p.album))]; }
+function getTags(){   return ["all", ...new Set(photos.flatMap(p=>p.tags))]; }
 
-function renderTags() {
+// --- ⑦ 渲染标签 ---
+function renderTags(){
   tagList.innerHTML = "";
-  getTags().forEach(tag => {
+  getTags().forEach(tag=>{
     const el = document.createElement("div");
-    el.className = "tag" + (currentFilter.tag === tag ? " active" : "");
-    el.innerText = tag === "all" ? "全部" : tag;
-    el.onclick = () => { currentFilter.tag = tag; renderTags(); renderPhotos(); };
+    el.className = "tag" + (currentFilter.tag===tag?" active":"");
+    el.innerText = tag==="all"?"全部":tag;
+    el.onclick = ()=>{
+        currentFilter.tag = tag;
+        renderTags(); renderPhotos();
+    };
     tagList.appendChild(el);
   });
 }
 
-function renderAlbums() {
+// --- ⑧ 渲染合集 ---
+function renderAlbums(){
   albumList.innerHTML = "";
-  getAlbums().forEach(album => {
+  getAlbums().forEach(album=>{
     const el = document.createElement("div");
-    el.className = "album-item" + (currentFilter.album === album ? " active" : "");
-    el.innerText = album === "all" ? "全部合集" : album;
-    el.onclick = () => { currentFilter.album = album; renderAlbums(); renderPhotos(); };
+    el.className = "album-item" + (currentFilter.album===album?" active":"");
+    el.innerText = album==="all"?"全部合集":album;
+    el.onclick = ()=>{
+        currentFilter.album = album;
+        renderAlbums(); renderPhotos();
+    };
     albumList.appendChild(el);
   });
 }
 
-searchInput.addEventListener("input", e => {
+// --- ⑨ 搜索输入 ---
+searchInput.addEventListener("input", e=>{
   currentFilter.search = e.target.value.trim();
   renderPhotos();
 });
 
+// --- ⑩ 初始化 ---
 renderPhotos(); renderTags(); renderAlbums();
 
-const dialog = document.getElementById('passwordDialog');
-const content = document.getElementById('content');
+// --- ⑪ 密码弹窗 ---
 window.onload = () => dialog.showModal();
-function closeDialog() { dialog.close(); }
-function verifyPassword() {
-  if (passwordInput.value === '123') { dialog.close(); content.style.display = 'block'; }
-  else { errorTip.style.display = 'block'; passwordInput.value = ''; }
+
+function closeDialog(){ dialog.close(); }
+function verifyPassword(){
+    if(passwordInput.value==='123'){  // 演示用密码，实际请改为安全方案
+        dialog.close();
+        content.style.display = 'block';
+    }else{
+        errorTip.style.display='block';
+        passwordInput.value='';
+    }
 }
 </script>
