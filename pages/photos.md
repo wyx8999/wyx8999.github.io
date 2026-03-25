@@ -12,7 +12,7 @@ password: 123
 photos:
   - src: "/assets/photos/hello_hebe1.jpg"
     alt: "Hebe"
-    album: "hello_hebe"
+    album: "hellohebe"
     tags: ["瑜伽"]
   - src: "/assets/photos/“我应该是很无趣的一个人吧，_我不喜欢毫无意义的社交，_不喜欢人潮汹涌的喧器，_不喜欢虚情假意的逢迎，_也不喜欢推杯换盏的交情，_我喜欢在自己的世界里安安静静。”_2.webp"
     alt: "欢"
