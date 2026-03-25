@@ -10,7 +10,6 @@ permalink: /video/
 ---
 > 藏时光一隅，盼君轻启。
 
-
 <style>
 #content { display: none; }
 .video-container {
