@@ -6,7 +6,7 @@ keywords: 视频,合集
 comments: false
 copyright: false
 menu: 视频
-permalink: /videos/
+permalink: /video/
 password: 123
 
 videos:
