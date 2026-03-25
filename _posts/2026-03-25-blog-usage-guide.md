@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "wyx8999.github.io 博客使用完全指南（新增/修改/配置一站式教程）"
-date: 2026-03-25 20:00:00 +0800
-categories: 博客教程
-tags: Jekyll GitHubPages 博客搭建 使用教程
+title: 博客使用指南
+categories: 教程
+tags: 博客
 ---
 
 # 一、博客介绍
