@@ -9,6 +9,7 @@ menu: 照片
 permalink: /photos/
 ---
 
+
 > 私藏岁月，静赏芳华。
 
 <style>
