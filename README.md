@@ -36,34 +36,7 @@ Fork 自 [mzlogin/mzlogin.github.io](https://github.com/mzlogin/mzlogin.github.i
 
 ## 🚀 快速开始
 
-### 1. 环境准备
-确保本地安装以下工具（版本要求：Ruby ≥ 2.5.0）：
-
-```bash
-# 检查 Ruby 版本
-ruby -v
-
-# 安装 Bundler
-gem install bundler
-2. 克隆项目
-bash
-# 克隆仓库到本地
-git clone https://github.com/wyx8999/wyx8999.github.io.git
-
-# 进入项目目录
-cd wyx8999.github.io
-3. 安装依赖
-bash
-bundle install
-4. 本地预览
-bash
-# 启动本地服务，实时预览
-bundle exec jekyll serve
-# 或简写
-jekyll s
-打开浏览器访问：http://127.0.0.1:4000，修改代码后浏览器强刷即可实时查看效果。
-
-5. 部署上线
+### 1.  部署上线
 方式 1：GitHub Pages 自动部署（推荐）
 
 将项目推送到自己的 GitHub 仓库，仓库名必须为 [你的用户名].github.io
@@ -82,7 +55,6 @@ jekyll s
 
 方式 3：本地构建后部署到其他服务器
 
-bash
 # 本地构建生成静态文件，输出到 _site 目录
 bundle exec jekyll build
 将 _site 目录下的所有文件上传到任意支持静态网站的服务器（如 Nginx、Apache、Netlify 等）。
@@ -90,7 +62,6 @@ bundle exec jekyll build
 📁 目录结构
 核心目录 / 文件说明，其余为 Jekyll 默认配置，无需修改：
 
-text
 wyx8999.github.io/
 ├── _data/          # 静态数据配置（导航链接、侧边栏等）
 │   └── links.yml   # 自定义导航链接配置
@@ -115,7 +86,6 @@ text
 YYYY-MM-DD-文章标题.md
 文件头部添加 YAML 前置配置（必填，示例）：
 
-markdown
 ---
 layout: post
 title: "博客使用指南"
@@ -144,76 +114,7 @@ categories:
 在 pages 目录下创建 Markdown/HTML 文件，如 photos.md（相册页），通过修改 _config.yml 配置导航链接，即可在首页顶部菜单展示。
 
 ⚙️ 核心配置（_config.yml）
-所有个性化配置均在项目根目录 _config.yml 文件中，必改项如下：
-
-yaml
-# 博客基本信息
-title: 你的博客名称
-subtitle: 博客副标题
-description: 博客描述（SEO 友好）
-url: https://[你的用户名].github.io  # 博客根地址
-author: 你的昵称
-email: 你的邮箱
-location: 城市
-
-# 导航菜单（对应 _data/links.yml）
-navs:
-  - title: 首页
-    url: /
-  - title: 博客
-    url: /posts/
-  - title: 维基
-    url: /wiki/
-  - title: 关于
-    url: /pages/about/
-
-# 功能开关
-cdn:
-  jsdelivr:
-    enabled: true  # 开启 jsDelivr CDN 加速
-busuanzi: true    # 开启不蒜子访问统计
-search: true      # 开启文章搜索
-
-# 首页定制
-index:
-  banner:
-    background: # 首页横幅背景色/图片，如：#2f4154 或 /images/bg-index.jpg
-
-# 评论系统（支持 giscus/gitalk/disqus）
-comments_provider: giscus
-giscus:
-  repo: 你的仓库名
-  repo_id: 仓库ID
-  category: 评论分类
-  category_id: 分类ID
-其余配置项参考文件内注释，按需修改即可。
-
-🎨 个性化定制
-1. 自定义首页横幅
-修改 _config.yml 中 index.banner.background，支持十六进制颜色值或图片路径：
-
-yaml
-index:
-  banner:
-    background: /images/bg-index.jpg  # 图片路径
-    # 或
-    background: #1E90FF  # 颜色值
-2. 添加侧边栏二维码
-修改 _includes/sidebar-qrcode.html 文件，替换二维码图片路径和描述，用于展示个人微信 / 公众号二维码。
-
-3. 配置导航链接
-修改 _data/links.yml 文件，添加 / 删除导航项，示例：
-
-yaml
-- title: 相册
-  url: /pages/photos/
-- title: 碎片
-  url: /fragments/
-4. 更换网站图标
-替换项目根目录的 favicon.ico 文件，建议尺寸：32×32px，格式：ico/png。
-
-5. 自定义代码高亮主题
-修改 _config.yml 中 highlight_theme，支持 GitHub、Solarized Light/Dark 等主题。
+所有个性化配置均在项目根目录 _config.yml 文件中。
 
 🐛 常见问题解决
 1. 本地启动失败
@@ -249,39 +150,5 @@ yaml
 本项目基于 MIT License 开源，详见项目根目录 LICENSE 文件。
 Fork / 二次开发时，请保留原作者信息和许可证协议。
 
-🔧 版本更新
-本项目在原模板基础上完成 98 项功能迭代，核心更新如下：
-
-新增「图片画廊」功能（_layouts/gallery）
-
-优化侧边栏组件，支持自定义二维码
-
-新增碎片笔记（_fragments）模块，自动生成时间线
-
-支持首页横幅背景自定义配置
-
-优化搜索功能，按需刷新 search_data.json
-
-完善图片资源管理，新增 pages/photos 相册页
-
-适配最新 Jekyll 版本，修复部分兼容性问题
-
-优化移动端响应式布局，提升阅读体验
-
-持续更新中，所有更新记录见项目 Commit 历史。
-
-💡 温馨提示
-建议定期备份 _posts、_wiki、images 等核心内容目录
-
-发布文章前建议本地预览，检查格式和链接是否正常
-
-如需关闭 GitHub Actions 自动构建，可修改 .github 目录下的配置文件
-
-若需添加广告，可修改 ads.txt 文件（适配 Google AdSense）
-
-欢迎提交 Issue 反馈问题，或 Fork 后提交 Pull Request 贡献代码。
-
-最后更新：2026-03-25
-维护者：wyx8999
 
 text
