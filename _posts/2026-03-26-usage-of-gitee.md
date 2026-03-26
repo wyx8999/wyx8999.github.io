@@ -6,14 +6,14 @@ description: 在第一次使用gitee交作业中，了解使用gitee
 keyword: Gitee, ssh
 ---
 
-在日常开发中，Git 是必不可少的版本控制工具，Gitee（码云）则是国内稳定高效的代码托管平台。本文将带你一步步完成 ****Git 安装、SSH 配置、Gitee 仓库创建、本地代码提交与推送****，实现本地与远程仓库的无缝协作。
+在日常开发中，Git 是必不可少的版本控制工具，Gitee（码云）则是国内稳定高效的代码托管平台。本文将带你一步步完成 **Git 安装、SSH 配置、Gitee 仓库创建、本地代码提交与推送**，实现本地与远程仓库的无缝协作。
 
 ## 一、Git 安装与环境配置
 
 ### 1.1 下载安装 Git
 
 访问 Git 官网下载对应系统版本：[https://git-scm.com/download](https://git-scm.com/download)  
-Windows 版本直接双击安装包，一路****下一步****即可完成安装。
+Windows 版本直接双击安装包，一路**下一步**即可完成安装。
 
 ### 1.2 验证安装与环境变量配置
 
@@ -23,7 +23,7 @@ git --version
 
 若显示版本号，说明安装与环境变量配置成功。
 
-若提示 \*\*“git 不是内部或外部命令”\*\*，手动配置环境变量：
+若提示 “git 不是内部或外部命令”，手动配置环境变量：
 
 1.  找到 Git 安装目录（如 `D:\Program Files\Git`）
 2.  复制 `cmd` 文件夹完整路径（`D:\Program Files\Git\cmd`）
@@ -36,7 +36,7 @@ git --version
 
 ### 2.1 生成 SSH 公钥
 
-桌面右键选择 ****Git Bash Here****，打开 Git 命令行，执行以下命令（邮箱替换为自己的）：
+桌面右键选择 **Git Bash Here**，打开 Git 命令行，执行以下命令（邮箱替换为自己的，非必须）：
 
 ssh-keygen -t ed25519 -C "your\_email@example.com"  
 
@@ -58,15 +58,15 @@ ssh -T git@gitee.com
 
 1.  登录 Gitee，点击右上角 + 号 → 新建仓库
 2.  填写仓库名称（路径自动生成），按需选择公开 / 私有
-3.  无需勾选初始化 README、.gitignore 等文件，直接点击****创建****。
+3.  无需勾选初始化 README、.gitignore 等文件，直接点击**创建**。
 
-创建完成后，复制仓库的 ****SSH 地址****（格式：`git@gitee.com:用户名/仓库名.git`），后续关联本地仓库使用。
+创建完成后，复制仓库的 **SSH 地址**（格式：`git@gitee.com:用户名/仓库名.git`），后续关联本地仓库使用。
 
 ## 四、本地仓库初始化与代码提交
 
 ### 4.1 配置 Git 全局用户信息
 
-打开 Git Bash，执行以下命令配置用户名和邮箱（与 Gitee 账号一致）。如开启不公开邮箱设置，请使用隐藏后的形式****……+……@user.noreply.gitee.com****：
+打开 Git Bash，执行以下命令配置用户名和邮箱（与 Gitee 账号一致）。如开启不公开邮箱设置，请使用隐藏后的形式 **……+……@user.noreply.gitee.com**：
 
 git config --global user.name "你的Gitee用户名"  
 git config --global user.email "你的Gitee绑定邮箱"  
