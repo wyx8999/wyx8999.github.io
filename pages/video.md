@@ -13,7 +13,7 @@ videos:
   - title: "灿琳然"
     desc: "记录生活的一天"
     cover: "/assets/video/1-灿琳然-壁纸来啰.jpg"
-    src: "/assets/video/灿琳然-以后_你坐副驾_每个红灯吻一下#人妻感_-20260320203148.mp4"
+    src: "/assets/video/灿琳然-以后_你坐副驾_每个红灯吻一下人妻感_-20260320203148.mp4"
     album: "灿琳然"
     tags: ["御姐"]
   - title: "严厉的文老师"
