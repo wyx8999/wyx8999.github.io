@@ -97,7 +97,7 @@
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
 
 <!-- ============================================== -->
-<!-- 👇 这里是强制真人验证，已经帮你放好位置 👇 -->
+<!-- 👇 最终完美版 强制真人验证 👇 -->
 <div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
     <h3>安全验证 · 请完成验证后访问博客</h3>
@@ -111,27 +111,32 @@
 </div>
 
 <script>
-// 全局检查会话验证（全站生效，刷新/换页都不用重复验证）
-if (sessionStorage.getItem('turnstile_verified')) {
+// 一进页面就先解锁页面，避免永远卡死
+document.body.style.overflow = "auto";
+document.documentElement.style.overflow = "auto";
+
+// 全局验证：只要浏览器没关，所有页面都通用（Cookie 实现）
+function getVerified() {
+  return document.cookie.includes('turnstile_verified=1');
+}
+
+// 检查是否已验证
+if (getVerified()) {
   document.getElementById("verify-wrapper").style.display = "none";
 }
 
 // 验证成功回调
 function onVerifySuccess(token) {
-  // 记录验证状态（当前浏览器标签全程有效，关闭即失效）
-  sessionStorage.setItem('turnstile_verified', 'true');
+  // 存入 Cookie：整站生效，关闭浏览器自动失效
+  document.cookie = "turnstile_verified=1; path=/; max-age=86400; SameSite=Lax";
   
-  // 隐藏验证遮罩 → 立即显示内容
+  // 立即隐藏遮罩
   document.getElementById("verify-wrapper").style.display = "none";
-  
-  // 修复：验证成功后强制让页面可滚动、解除锁定
-  document.body.style.overflow = "auto";
-  document.documentElement.style.overflow = "auto";
 }
 </script>
-
-<!-- 👆 强制验证代码结束 👆 -->
+<!-- 👆 验证代码结束 👆 -->
 <!-- ============================================== -->
+    
 
     <header class="site-header">
         <div class="container">
