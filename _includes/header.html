@@ -97,7 +97,7 @@
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
 
 <!-- ============================================== -->
-<!-- 👇 最终完美版 强制真人验证 👇 -->
+<!-- 👇 最终无BUG版 真人验证 👇 -->
 <div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
     <h3>安全验证 · 请完成验证后访问博客</h3>
@@ -111,32 +111,30 @@
 </div>
 
 <script>
-// 一进页面就先解锁页面，避免永远卡死
-document.body.style.overflow = "auto";
-document.documentElement.style.overflow = "auto";
-
-// 全局验证：只要浏览器没关，所有页面都通用（Cookie 实现）
-function getVerified() {
-  return document.cookie.includes('turnstile_verified=1');
-}
-
-// 检查是否已验证
-if (getVerified()) {
-  document.getElementById("verify-wrapper").style.display = "none";
-}
-
-// 验证成功回调
-function onVerifySuccess(token) {
-  // 存入 Cookie：整站生效，关闭浏览器自动失效
-  document.cookie = "turnstile_verified=1; path=/; max-age=86400; SameSite=Lax";
+// 等待页面加载完成再执行（彻底解决卡死）
+window.onload = function() {
+  const wrapper = document.getElementById("verify-wrapper");
   
-  // 立即隐藏遮罩
-  document.getElementById("verify-wrapper").style.display = "none";
+  // 读取验证状态（全站通用，关闭浏览器即失效）
+  function isVerified() {
+    return document.cookie.indexOf("turnstile_verified=ok") > -1;
+  }
+
+  // 已验证 → 直接隐藏
+  if (isVerified()) {
+    wrapper.style.display = "none";
+  }
+
+  // 验证成功回调
+  window.onVerifySuccess = function(token) {
+    // 写入Cookie：整站生效 / 关闭浏览器即消失
+    document.cookie = "turnstile_verified=ok; path=/; SameSite=Lax";
+    wrapper.style.display = "none";
+  }
 }
 </script>
 <!-- 👆 验证代码结束 👆 -->
-<!-- ============================================== -->
-    
+<!-- ============================================== -->   
 
     <header class="site-header">
         <div class="container">
