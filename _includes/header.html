@@ -95,6 +95,28 @@
     {% endif %}
 </head>
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
+
+<!-- ============================================== -->
+<!-- 👇 这里是强制真人验证，已经帮你放好位置 👇 -->
+<div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
+    <h3>安全验证 · 请完成验证后访问博客</h3>
+    <div style="margin:25px 0;"
+      class="cf-turnstile"
+      data-sitekey="0x4AAAAAACwuIcdNgymv9Fu5"
+      data-callback="onVerifySuccess"
+      data-language="zh-CN">
+    </div>
+  </div>
+</div>
+<script>
+function onVerifySuccess(token){
+  document.getElementById("verify-wrapper").style.display="none";
+}
+</script>
+<!-- 👆 强制验证代码结束 👆 -->
+<!-- ============================================== -->
+
     <header class="site-header">
         <div class="container">
             <h1><a href="{{ site.url }}/" title="{{ site.title }}"><span class="octicon octicon-mark-github"></span> {{ site.title }}</a></h1>
