@@ -97,7 +97,7 @@
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
 
 <!-- ============================================== -->
-<!-- 👇 最终终极版 · 一次验证 · 全站生效 · 关闭即失效 👇 -->
+<!-- 👇 兜底终极版 · 验证成功必隐藏遮罩 👇 -->
 <div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
     <h3>安全验证 · 请完成验证后访问博客</h3>
@@ -110,17 +110,26 @@
   </div>
 </div>
 
+<!-- 先加载 Turnstile 脚本，确保回调能被找到 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 <script>
-// 全局函数 → 必须写在外面！Turnstile 才能找到
-function onVerifySuccess(token) {
+// 全局函数，确保 Turnstile 一定能找到
+window.onVerifySuccess = function(token) {
+  console.log("验证成功，正在隐藏遮罩");
+  const wrapper = document.getElementById('verify-wrapper');
+  if (wrapper) {
+    wrapper.style.display = 'none';
+  }
+  // 同时记录会话状态
   sessionStorage.setItem('turnstile_verified', 'true');
-  document.getElementById('verify-wrapper').style.display = 'none';
 }
 
-// 页面加载立即执行
+// 页面加载完成后检查状态
 document.addEventListener('DOMContentLoaded', function() {
-  if (sessionStorage.getItem('turnstile_verified')) {
-    document.getElementById('verify-wrapper').style.display = 'none';
+  const wrapper = document.getElementById('verify-wrapper');
+  if (sessionStorage.getItem('turnstile_verified') && wrapper) {
+    wrapper.style.display = 'none';
   }
 });
 </script>
