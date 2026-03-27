@@ -1,231 +1,114 @@
-    <footer class="container">
-
-      {% include footer-ad.html %}
-
-        <div class="site-footer" role="contentinfo">
-            <div class="copyright left mobile-block">
-                    © {{ site.since }}
-                    <span title="{{ site.author}}">{{ site.author }}</span>
-                    <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
-            </div>
-
-            <ul class="site-footer-links right mobile-hidden">
-                <li>
-                    <a href="javascript:window.scrollTo(0,0)" >TOP</a>
-                </li>
-            </ul>
-            <a href="{{ site.github.repository_url }}" target="_blank" aria-label="view source code">
-                <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
-            </a>
-            <ul class="site-footer-links mobile-hidden">
-                {% for nav in site.navs %}
-                <li>
-                    <a href="{{ site.url }}{{ nav.href }}" title="{{ nav.label }}" target="{{ nav.target | default: _self }}">{{ nav.label }}</a>
-                </li>
-                {% endfor %}
-                <li><a href="{{ site.url }}{{ site.subscribe_rss }}"><span class="octicon octicon-rss" style="color:orange;"></span></a></li>
-            </ul>
-
-          {% include visit-stat.html %}
-
-        </div>
-    </footer>
-    <div class="tools-wrapper">
-      <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a>
-    </div>
-    <!-- / footer -->
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>{% if page.title %}{{ page.title }} &mdash; {% endif %}{{ site.title }}</title>
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/vendor/primer-css/css/primer.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/components/collection.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/components/repo-card.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/sections/repo-list.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/components/boxed-group.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/globals/common.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/globals/responsive.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/posts/index.css">
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/vendor/octicons/octicons/octicons.css">
+    {% assign highlight_base_url = 'https://mazhuang.org/rouge-themes/dist' %}
+    {% if site.cdn.jsdelivr.enabled %}
+    {% assign highlight_base_url = 'https://fastly.jsdelivr.net/gh/mzlogin/rouge-themes@master/dist' %}
+    {% endif %}
+    <link rel="stylesheet" href="{{ highlight_base_url }}/{{ site.highlight_theme}}.css">
     {% if site.components.share.enabled %}
-    <script src="{{ assets_base_url }}/assets/vendor/share.js/dist/js/share.min.js"></script>
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/vendor/share.js/dist/css/share.min.css">
     {% endif %}
-    <script src="{{ assets_base_url }}/assets/js/geopattern.js"></script>
-    <script>
-      jQuery(document).ready(function($) {
-        $('.geopattern').each(function(){
-          $(this).geopattern($(this).data('pattern-id'));
-        });
-       /* hljs.initHighlightingOnLoad(); */
-      });
-    </script>
-
     {% if site.components.fancybox.enabled %}
-    <script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css"/>
+    {% endif %}
+    <!-- Latest compiled and minified CSS -->
+    {% for css in page.css %}
+    <link rel="stylesheet" href="{{ assets_base_url }}/assets/css/{{css}}">
+    {% endfor %}
+
+    {% if site.ios_app_name %}
+       <meta name="apple-mobile-web-app-capable" content="yes">
+       <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    {% endif %}
+    <link rel="canonical" href="{{ page.url | prepend: site.url }}">
+    <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ site.url }}{{ site.subscribe_rss }}">
+    <link rel="shortcut icon" href="{{ assets_base_url }}/favicon.ico">
+    {% if page.title %}
+    <meta property="og:title" content="{{ page.title }}">
+      {% if page.keywords %}
+      {% assign keywords = page.keywords %}
+      {% else %}
+      {% assign keywords = site.keywords %}
+      {% endif %}
+    <meta name="keywords" content="{{ keywords | strip_html | strip_newlines}}">
+    <meta name="og:keywords" content="{{ keywords | strip_html | strip_newlines}}">
+      {% if page.excerpt %}
+    <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines}}">
+    <meta name="og:description" content="{{ page.excerpt | strip_html | strip_newlines}}">
+      {% else if page.description %}
+    <meta name="description" content="{{ page.description | strip_html | strip_newlines}}">
+    <meta name="og:description" content="{{ page.description | strip_html | strip_newlines}}">
+      {% else if content %}
+    <meta name="description" content="{{ content | strip_html | strip_newlines | truncatewords: 100 }}">
+    <meta name="og:description" content="{{ content | strip_html | strip_newlines | truncatewords: 100 }}">
+      {% endif %}
+    {% else %}
+    <meta name="keywords" content="{{ site.keywords }}">
+    <meta name="description" content="{{ site.description }}">
+    {% endif %}
+    {% if page.og_image_url %}
+    <meta property="og:image" content="{{ page.og_image_url }}">
+    {% else %}
+        {% if page.photo_url %}
+    <meta property="og:image" content="{{ page.photo_url }}">
+        {% endif %}
+    {% endif %}
+    <meta property="og:url" content="{{ site.url }}{{ page.url | remove_first:'index.html' }}">
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="zh_CN" />
+    {% if page.date %}
+    <meta property="article:published_time" content="{{ page.date | date: '%Y-%m-%d' }}">
+    {% endif %}
+
+    <script src="{{ assets_base_url }}/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="{{ assets_base_url }}/assets/js/main.js"></script>
+
+    {% if site.google.adsense.enabled and site.url contains 'mazhuang.org' %}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7093222719567591" crossorigin="anonymous"></script>
+    {% endif %}
+
+    {% if site.google.analytics_id %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google.analytics_id }}"></script>
     <script>
-      $(document).ready(function() {
-        $("p img").each(function() {
-          var strA = "<a href='" + this.src + "' itemscope=\"\" itemtype=\"http://schema.org/ImageObject\" itemprop=\"url\" data-fancybox=\"default\" rel=\"default\"></a>";
-          $(this).wrapAll(strA);
-        });
-      });
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{ site.google.analytics_id }}');
     </script>
     {% endif %}
-
-    {% if page.mermaid %}
-    <script type="module">
-      import mermaid from 'https://fastly.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: false });
-      await mermaid.run({
-        nodes: document.querySelectorAll('pre code.language-mermaid'),
-      });
-    </script>
-    <script type="text/javascript">
-  (function(){
-    $("pre code.language-mermaid").each(function(index, element) {
-      var preBlock = element.parentNode;
-      element.style.backgroundColor = 'initial';
-      preBlock.style.border = 'none';
-      preBlock.style.backgroundColor = 'initial';
-    });
-  })()
-    </script>
-    {% endif %}
-
-    {% if page.sequence %}
-    <script src="{{ assets_base_url }}/assets/js/webfont.js"></script>
-    <script src="{{ assets_base_url }}/assets/js/snap.svg-min.js"></script>
-    <script src="https://fastly.jsdelivr.net/npm/underscore@1.13.1/underscore-umd-min.js"></script>
-    <script src="{{ assets_base_url }}/assets/vendor/js-sequence-diagrams/dist/sequence-diagram-min.js"></script>
-    <link rel="stylesheet" href="{{ assets_base_url }}/assets/vendor/js-sequence-diagrams/dist/sequence-diagram-min.css">
-    <script>
-      $(".language-sequence").sequenceDiagram({theme: 'simple'});
-    </script>
-    {% endif %}
-
-    {% if page.flow %}
-    <script src="{{ assets_base_url }}/assets/js/raphael.min.js"></script>
-    <script src="{{ assets_base_url }}/assets/vendor/flowchart.js/dist/flowchart.min.js"></script>
-    <script src="{{ assets_base_url }}/assets/js/flow.js"></script>
-    {% endif %}
-
-    {% if page.mathjax %}
-    <script type="text/javascript" src="https://fastly.jsdelivr.net/gh/mathjax/MathJax@2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    {% endif %}
-
-    {% if page.mindmap %}
-    <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/mzlogin/kityminder-core@dev/dist/kityminder.core.css">
-    <script type="text/javascript" src="https://fastly.jsdelivr.net/gh/mzlogin/kity@dev/dist/kity.min.js"></script>
-    <script type="text/javascript" src="https://fastly.jsdelivr.net/gh/mzlogin/kityminder-core@dev/dist/kityminder.core.min.js"></script>
-    <script>
-$(document).ready(function(){
-  $('.language-mindmap').each(function(index, element) {
-    var markdownText = element.textContent.trim();
-    var parentNode = element.parentNode.parentNode;
-    var nodeName = '.language-mindmap-' + index;
-    var node = document.createElement("div");
-    node.className = 'language-mindmap-' + index;
-    node.style.height = '' + $(element).height() + 'px';
-    parentNode.insertBefore(node, element.parentNode);
-    var minder = new kityminder.Minder({
-      renderTo: nodeName
-    });
-    minder.importData('markdown', markdownText);
-    /* minder.disable(); */
-    minder.execCommand('hand');
-
-    var viewerTipNode = document.createElement("a");
-    viewerTipNode.setAttribute('href', '{{ site.url }}/mindmap-viewer/?data=' + encodeURIComponent(markdownText));
-    viewerTipNode.setAttribute('target', '_blank');
-    viewerTipNode.setAttribute('style', 'font-size:0.8rem;font-style:italic;font-color:grey;');
-    viewerTipNode.innerText = '全屏查看';
-    parentNode.insertBefore(viewerTipNode, element.parentNode);
-
-    element.parentNode.style.display = 'none';
-
-    {% if page.mindmap-template %}
-    setTimeout(function() {
-      minder.setTemplate('{{ page.mindmap-template }}');
-      minder.refresh();
-    }, 100);
-    {% endif %}
-  });
-});
-    </script>
-    {% endif %}
-{% if page.mindmap2 %}
-    <script src="https://fastly.jsdelivr.net/npm/d3@6"></script>
-    <script src="https://fastly.jsdelivr.net/npm/markmap-view"></script>
-    <script src="https://fastly.jsdelivr.net/npm/markmap-autoloader@0.1.2/dist/index.min.js"></script>
-    <style>
-        .markmap > svg {
-          width: 100%;
-          height: 100%;
-          background: rgba(255, 255, 255, 0.9);
-        }
-    </style>
-    <script>
-        function fullScreen(nodeId) {
-            var element= document.getElementById(nodeId);  
-            if (window.ActiveXObject) {
-                var WsShell = new ActiveXObject('WScript.Shell');
-                WsShell.SendKeys('{F11}');
-            }
-            else if (element.requestFullScreen) {
-                element.requestFullScreen();
-            }
-            else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-            else if (element.webkitRequestFullScreen) {
-                element.webkitRequestFullScreen();
-            }
-            else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            }
-        }
-
-        function fullExit() {
-            var element= document.getElementById("ddd");  
-            if (window.ActiveXObject) {
-                var WsShell = new ActiveXObject('WScript.Shell');
-                WsShell.SendKeys('{F11}');
-            }
-            else if (element.requestFullScreen) {
-                document.exitFullscreen();
-            }
-            else if (element.msRequestFullscreen) {
-                document.msExitFullscreen();
-            }
-            else if (element.webkitRequestFullScreen) {
-                document.webkitCancelFullScreen();
-            }
-            else if (element.mozRequestFullScreen) {
-                document.mozCancelFullScreen();
-            }
-        }
-
-        function insertAfter(newElement, targetElement) {
-            var parent = targetElement.parentNode;
-            if (parent.lastChild == targetElement) {
-                parent.appendChild(targetElement);
-            } else {
-                parent.insertBefore(newElement, targetElement.nextSibling);
-            }
-        }
-       
-        $(document).ready(function(){
-            $('.language-mindmap').each(function(index, element) {
-                window.markmap = {
-                    autoLoader: { manual: false },
-                };
-                var markdownText = element.textContent.trim();
-                var parentNode = element.parentNode.parentNode;
-                element.setAttribute('class', "markmap");
-                var nodeName = '.language-mindmap-' + index;
-                element.setAttribute("id", nodeName);
-                var viewerTipNode1 = document.createElement("a");
-                viewerTipNode1.appendChild(document.createTextNode("全屏"));
-                viewerTipNode1.setAttribute('onclick', 'fullScreen("' + nodeName + '")');
-                viewerTipNode1.setAttribute('style', 'font-size:0.8rem;font-style:italic;font-color:grey;');
-                viewerTipNode1.setAttribute('href', 'javascript:void(0)');
-                insertAfter(viewerTipNode1, element.parentNode);
-                var viewerTipNode2 = document.createElement("a");
-                viewerTipNode2.appendChild(document.createTextNode("语法提示"));
-                viewerTipNode2.setAttribute('href', 'https://markmap.js.org/');
-                viewerTipNode2.setAttribute('target', '_blank');
-                viewerTipNode2.setAttribute('style', 'font-size:0.8rem;font-style:italic;font-color:grey;padding-left:0.5rem;');
-                insertAfter(viewerTipNode2, viewerTipNode1);
-            });
-        });
-    </script>
-{% endif %}
-</body>
-</html>
+</head>
+<body class="{{ page.class }}" data-mz="{{ page.class }}">
+    <header class="site-header">
+        <div class="container">
+            <h1><a href="{{ site.url }}/" title="{{ site.title }}"><span class="octicon octicon-mark-github"></span> {{ site.title }}</a></h1>
+            <button class="collapsed mobile-visible" type="button" onclick="toggleMenu();">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <nav class="site-header-nav" role="navigation">
+                {% for nav in site.navs %}
+                <a href="{{ site.url }}{{ nav.href }}" class="{% if nav.mobile-hidden %}mobile-hidden {% endif %}{% if page.menu == nav.label %}selected {% endif %}site-header-nav-item" target="{{ nav.target | default: _self }}" title="{{ nav.label }}">{{ nav.label }}</a>
+                {% endfor %}
+                <a class="mobile-hidden" href="{{ site.url }}{{ site.subscribe_rss }}"><span class="octicon octicon-rss" style="color:orange;"></span></a>
+            </nav>
+        </div>
+    </header>
+    <!-- / header -->
