@@ -109,11 +109,23 @@
     </div>
   </div>
 </div>
+
 <script>
-function onVerifySuccess(token){
-  document.getElementById("verify-wrapper").style.display="none";
+// 检查当前会话是否已验证
+// sessionStorage 关闭网站就清空，下次访问必须重新验证
+if (sessionStorage.getItem('turnstile_verified')) {
+  // 已验证 → 隐藏遮罩
+  document.getElementById("verify-wrapper").style.display = "none";
+}
+
+// 验证成功后，记录到会话存储
+function onVerifySuccess(token) {
+  document.getElementById("verify-wrapper").style.display = "none";
+  // 关键：使用 sessionStorage 而不是 localStorage
+  sessionStorage.setItem('turnstile_verified', 'true');
 }
 </script>
+
 <!-- 👆 强制验证代码结束 👆 -->
 <!-- ============================================== -->
 
