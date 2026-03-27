@@ -97,45 +97,36 @@
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
 
 <!-- ============================================== -->
-<!-- 👇 最终无BUG版 真人验证 👇 -->
+<!-- 👇 最终终极版 · 一次验证 · 全站生效 · 关闭即失效 👇 -->
 <div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
     <h3>安全验证 · 请完成验证后访问博客</h3>
-    <div style="margin:25px 0;"
-      class="cf-turnstile"
-      data-sitekey="0x4AAAAAACwuIcdNgymv9Fu5"
+    <div 
+      class="cf-turnstile" 
+      data-sitekey="0x4AAAAAACwuIcdNgymv9Fu5" 
       data-callback="onVerifySuccess"
-      data-language="zh-CN">
-    </div>
+      data-language="zh-CN"
+      style="margin:25px 0;"></div>
   </div>
 </div>
 
 <script>
-// 等待页面加载完成再执行（彻底解决卡死）
-window.onload = function() {
-  const wrapper = document.getElementById("verify-wrapper");
-  
-  // 读取验证状态（全站通用，关闭浏览器即失效）
-  function isVerified() {
-    return document.cookie.indexOf("turnstile_verified=ok") > -1;
-  }
-
-  // 已验证 → 直接隐藏
-  if (isVerified()) {
-    wrapper.style.display = "none";
-  }
-
-  // 验证成功回调
-  window.onVerifySuccess = function(token) {
-    // 写入Cookie：整站生效 / 关闭浏览器即消失
-    document.cookie = "turnstile_verified=ok; path=/; SameSite=Lax";
-    wrapper.style.display = "none";
-  }
+// 全局函数 → 必须写在外面！Turnstile 才能找到
+function onVerifySuccess(token) {
+  sessionStorage.setItem('turnstile_verified', 'true');
+  document.getElementById('verify-wrapper').style.display = 'none';
 }
+
+// 页面加载立即执行
+document.addEventListener('DOMContentLoaded', function() {
+  if (sessionStorage.getItem('turnstile_verified')) {
+    document.getElementById('verify-wrapper').style.display = 'none';
+  }
+});
 </script>
 <!-- 👆 验证代码结束 👆 -->
-<!-- ============================================== -->   
-
+<!-- ============================================== -->
+    
     <header class="site-header">
         <div class="container">
             <h1><a href="{{ site.url }}/" title="{{ site.title }}"><span class="octicon octicon-mark-github"></span> {{ site.title }}</a></h1>
