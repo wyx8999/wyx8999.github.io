@@ -227,5 +227,73 @@ $(document).ready(function(){
         });
     </script>
 {% endif %}
+
+<!-- 1. 引入 Turnstile 官方脚本 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<!-- 2. 验证弹窗容器（默认隐藏） -->
+<div id="turnstile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:30px; border-radius:8px; text-align:center;">
+    <h3>请完成安全验证</h3>
+    <!-- Turnstile 验证组件 -->
+    <div class="cf-turnstile" data-sitekey="你的TURNSTILE_SITE_KEY" data-callback="onTurnstileSuccess" data-theme="auto"></div>
+  </div>
+</div>
+
+<script>
+// 配置区（替换成你的信息）
+const CONFIG = {
+  siteKey: "0x4AAAAAACwy0_qTwLQV5AB7",       // 替换成你的 Site Key
+  verifyApi: "https://blog-turnstile-verify.zhangxiaoyu.workers.dev/",  // 替换成你的 Worker 地址
+  sessionKey: "turnstile_verified",       // 会话存储标识
+};
+
+// 页面加载时执行校验
+window.addEventListener("DOMContentLoaded", checkVerification);
+
+// 核心逻辑：检查是否需要验证
+async function checkVerification() {
+  const modal = document.getElementById("turnstile-modal");
+  
+  // 1. 如果会话中已有验证记录 → 直接放行
+  if (sessionStorage.getItem(CONFIG.sessionKey) === "true") {
+    return;
+  }
+
+  // 2. 无记录 → 显示验证弹窗
+  modal.style.display = "flex";
+
+  // 3. 渲染 Turnstile（自动触发：真人无感通过，机器人要求点击）
+  turnstile.render('.cf-turnstile', {
+    sitekey: CONFIG.siteKey,
+    callback: onTurnstileSuccess,
+  });
+}
+
+// 验证成功回调
+async function onTurnstileSuccess(token) {
+  try {
+    // 调用 Worker 后端验证令牌
+    const res = await fetch(CONFIG.verifyApi, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      // ✅ 验证通过：存储会话标记（关闭标签页失效）
+      sessionStorage.setItem(CONFIG.sessionKey, "true");
+      // 隐藏弹窗，允许访问博客
+      document.getElementById("turnstile-modal").style.display = "none";
+    }
+  } catch (err) {
+    console.error("验证失败", err);
+  }
+}
+</script>
+
+
+
 </body>
 </html>
