@@ -97,7 +97,28 @@
 <body class="{{ page.class }}" data-mz="{{ page.class }}">
 
 <!-- ============================================== -->
-<!-- 👇 全局函数兜底版 👇 -->
+<!-- 👇 终极兜底版 · 函数前置 + 强制可见 👇 -->
+<script>
+// 1. 先把回调函数挂到全局，保证任何时候都能找到
+window.onVerifySuccess = function(token) {
+  console.log("✅ 验证成功，开始隐藏遮罩");
+  
+  // 兜底：延迟 100ms 再找元素，确保 DOM 已渲染
+  setTimeout(function() {
+    const wrapper = document.getElementById('verify-wrapper');
+    if (wrapper) {
+      wrapper.style.display = 'none';
+    }
+  }, 100);
+  
+  sessionStorage.setItem('turnstile_verified', 'true');
+};
+</script>
+
+<!-- 2. 加载 Turnstile 脚本 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<!-- 3. 验证遮罩 -->
 <div id="verify-wrapper" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:30px;background:#f8f9fa;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.1);">
     <h3>安全验证 · 请完成验证后访问博客</h3>
@@ -110,26 +131,15 @@
   </div>
 </div>
 
-<!-- 先加载 Turnstile 脚本 -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
 <script>
-// 直接挂载到 window，确保全局可见
-window.onVerifySuccess = function(token) {
-  console.log("✅ 验证成功回调执行");
-  const wrapper = document.getElementById('verify-wrapper');
-  if (wrapper) {
-    wrapper.style.display = 'none';
-  }
-  sessionStorage.setItem('turnstile_verified', 'true');
-};
-
-// 页面加载后检查状态
+// 4. 页面加载后检查验证状态
 document.addEventListener('DOMContentLoaded', function() {
-  const wrapper = document.getElementById('verify-wrapper');
-  if (sessionStorage.getItem('turnstile_verified') && wrapper) {
-    wrapper.style.display = 'none';
-  }
+  setTimeout(function() {
+    const wrapper = document.getElementById('verify-wrapper');
+    if (sessionStorage.getItem('turnstile_verified') && wrapper) {
+      wrapper.style.display = 'none';
+    }
+  }, 100);
 });
 </script>
 <!-- 👆 验证代码结束 👆 -->
