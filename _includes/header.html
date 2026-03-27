@@ -111,18 +111,22 @@
 </div>
 
 <script>
-// 检查当前会话是否已验证
-// sessionStorage 关闭网站就清空，下次访问必须重新验证
+// 全局检查会话验证（全站生效，刷新/换页都不用重复验证）
 if (sessionStorage.getItem('turnstile_verified')) {
-  // 已验证 → 隐藏遮罩
   document.getElementById("verify-wrapper").style.display = "none";
 }
 
-// 验证成功后，记录到会话存储
+// 验证成功回调
 function onVerifySuccess(token) {
-  document.getElementById("verify-wrapper").style.display = "none";
-  // 关键：使用 sessionStorage 而不是 localStorage
+  // 记录验证状态（当前浏览器标签全程有效，关闭即失效）
   sessionStorage.setItem('turnstile_verified', 'true');
+  
+  // 隐藏验证遮罩 → 立即显示内容
+  document.getElementById("verify-wrapper").style.display = "none";
+  
+  // 修复：验证成功后强制让页面可滚动、解除锁定
+  document.body.style.overflow = "auto";
+  document.documentElement.style.overflow = "auto";
 }
 </script>
 
