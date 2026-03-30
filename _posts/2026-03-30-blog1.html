@@ -1,0 +1,2118 @@
+---
+layout: null
+title: "Cloudflare 博客实操指南"
+date: 2026-03-30
+categories: 教程
+description: 博客操作指南
+keywords: cloudflare, 博客
+---
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>在 Cloudflare 上搭建个人博客 · 全流程实操指南</title>
+<meta name="description" content="面向初学者的详细教程：用 Cloudflare Pages + GitHub（或其他静态站点生成器）零成本部署高性能个人博客。含模板代码、Markdown写作、评论、分析、SEO、可选国内访问优化等完整方案。" />
+<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:#0f141b;
+    --muted:#9aa4b2;
+    --text:#e6edf3;
+    --primary:#7aa2ff;
+    --primary-600:#5f89ff;
+    --accent:#22d3ee;
+    --ok:#34d399;
+    --warn:#fbbf24;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 800px at 85% -10%, rgba(122,162,255,0.15), transparent 60%),
+      radial-gradient(900px 600px at -10% 15%, rgba(34,211,238,0.10), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family: Inter, "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    letter-spacing: 0.1px;
+  }
+  .glass{
+    backdrop-filter: saturate(140%) blur(14px);
+    background: rgba(16,21,28,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  .kbd{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.04);
+    padding:2px 8px; border-radius:8px; font-size:12px;
+  }
+  .step-badge{
+    width:28px; height:28px; border-radius:999px; display:grid; place-items:center;
+    background:linear-gradient(135deg, var(--primary), var(--accent));
+    color:#0b0f14; font-weight:800; font-size:12px;
+  }
+  .shadow-soft{ box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);}
+  .ring-primary{ box-shadow: 0 0 0 1px rgba(122,162,255,0.35), 0 10px 30px rgba(0,0,0,0.35);}
+  .prose :where(code):not(:where(pre *)){
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    padding:.1rem .35rem; border-radius:6px;
+    color:#cfe2ff; font-size:0.95em;
+  }
+  .prose pre{
+    background: #0a0e13; border:1px solid rgba(255,255,255,.08);
+    border-radius: 14px; padding: 14px; overflow:auto;
+  }
+  .prose pre code{ background: transparent; border:0; padding:0; color:#cbd5e1;}
+  .toc a{ color: var(--muted);}
+  .toc a:hover{ color: var(--text);}
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:999px;
+    background: rgba(122,162,255,.10);
+    border:1px solid rgba(122,162,255,.25);
+    color:#cfe2ff; font-size:12px;
+  }
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px;
+    background: rgba(34,211,238,.10); border:1px solid rgba(34,211,238,.25); color:#bff4ff; font-size:12px;
+  }
+  .grid-pattern{
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(80% 60% at 50% 0%, #000 60%, transparent 100%);
+  }
+  .highlight{
+    background: linear-gradient(90deg, rgba(122,162,255,.25), rgba(34,211,238,.25));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .copy-btn{
+    cursor:pointer; user-select:none;
+  }
+  .tag{
+    font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04); color: #c8d3e2;
+  }
+  .mini-card{
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+  }
+  .subtle{
+    color: var(--muted);
+  }
+  .divider{
+    height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+  }
+  .check{
+    width:18px;height:18px;border-radius:6px;border:1px solid rgba(255,255,255,.2);
+    display:grid;place-items:center;background:rgba(255,255,255,.04)
+  }
+  .callout{
+    border:1px dashed rgba(122,162,255,.4);
+    background: rgba(122,162,255,.06);
+    border-radius:16px; padding:14px;
+  }
+  .num-list li{ margin: 8px 0;}
+  .filetree{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    background: #0a0e13; border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:14px; color:#cbd5e1;
+  }
+  .sr-only{
+    position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  .timeline::before{
+    content:""; position:absolute; left:14px; top:0; bottom:0; width:2px; background: rgba(255,255,255,.12);
+  }
+  .timeline .dot{
+    position:absolute; left:6px; top:6px; width:16px; height:16px; border-radius:999px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    box-shadow: 0 0 0 3px rgba(122,162,255,.18);
+  }
+  .accordion summary::-webkit-details-marker{ display:none;}
+  details[open] .chev{ transform: rotate(90deg); }
+</style>
+</head>
+<body class="antialiased selection:bg-[#7aa2ff]/30 selection:text-white">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-white/5 bg-[#0b0f14]/70 backdrop-blur-md">
+    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-3">
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="relative">
+          <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-[#7aa2ff] to-[#22d3ee] grid place-items-center shadow-soft">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-[#07111e]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.2" /></svg>
+          </div>
+          <span class="absolute -right-1 -bottom-1 h-3 w-3 rounded-full bg-[#34d399] ring-2 ring-[#0b0f14]"></span>
+        </div>
+        <div class="leading-tight">
+          <div class="text-[15px] font-semibold tracking-tight">Cloudflare 博客实操指南</div>
+          <div class="text-[11px] text-white/50">从 0 到上线 · 含可复制代码与模板</div>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-[14px]">
+        <a href="#overview" class="text-white/80 hover:text-white">概览</a>
+        <a href="#quickstart" class="text-white/80 hover:text-white">极速起步</a>
+        <a href="#structure" class="text-white/80 hover:text-white">站点结构</a>
+        <a href="#markdown" class="text-white/80 hover:text-white">写作规范</a>
+        <a href="#deploy" class="text-white/80 hover:text-white">部署</a>
+        <a href="#features" class="text-white/80 hover:text-white">功能增强</a>
+        <a href="#ops" class="text-white/80 hover:text-white">运维与优化</a>
+        <a href="#faq" class="text-white/80 hover:text-white">FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="#quickstart" class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-[13px] hover:bg-white/10 border border-white/10">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          立刻开始
+        </a>
+        <button id="open-toc" class="md:hidden inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-[13px] hover:bg-white/10 border border-white/10" aria-haspopup="dialog" aria-controls="toc-drawer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          目录
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="top" class="relative overflow-hidden">
+    <div class="absolute inset-0 grid-pattern"></div>
+    <div class="mx-auto max-w-7xl px-4 pt-14 pb-8 md:pt-20 md:pb-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[12px] text-white/80">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#34d399]"></span>
+          零成本 · 全球加速 · 静态托管 · 适配国内访问
+        </div>
+        <h1 class="mt-4 text-[34px] md:text-[44px] font-extrabold leading-[1.15] tracking-tight">
+          在 <span class="highlight">Cloudflare</span> 上搭建个人博客：
+          <span class="whitespace-nowrap">完整实操手册</span>
+        </h1>
+        <p class="mt-4 text-[15px] md:text-[16px] leading-relaxed text-white/80">
+          这份指南将带你用 <b>Cloudflare Pages</b> + <b>GitHub</b>（或任意 Git 仓库）快速上线高性能博客。
+          含 <b>Markdown 写作模板</b>、<b>评论与分析</b>、<b>SEO</b>、<b>自定义域名</b>、<b>可选国内访问优化</b>，
+          以及完整的 <b>复制可用代码片段</b> 与 <b>最小化 Astro/Hugo 两种方案</b>。
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a href="#quickstart" class="group relative inline-flex items-center gap-2 rounded-2xl px-5 py-3 font-semibold text-[#06121f] shadow-soft overflow-hidden">
+            <span class="absolute inset-0 bg-gradient-to-br from-[#7aa2ff] to-[#22d3ee]"></span>
+            <span class="relative flex items-center gap-2">
+              立即开始部署
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="transition-transform group-hover:translate-x-0.5"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+          </a>
+          <a href="#templates" class="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-[14px] hover:bg-white/10">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            查看模板与代码
+          </a>
+          <span class="badge">全程可复制</span>
+          <span class="pill">含国内访问优化</span>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center gap-5 text-[13px] text-white/70">
+          <div class="flex items-center gap-2">
+            <span class="inline-grid place-items-center h-6 w-6 rounded-lg bg-white/5 border border-white/10"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.8"/></svg></span>
+            预估时间：<b class="text-white">20–40 分钟</b>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-grid place-items-center h-6 w-6 rounded-lg bg-white/5 border border-white/10"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v6l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            成本：<b class="text-white">0 元起</b>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-grid place-items-center h-6 w-6 rounded-lg bg-white/5 border border-white/10"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            适合：<b class="text-white">个人技术/生活博客</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview card -->
+      <div class="relative">
+        <div class="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#7aa2ff]/20 to-[#22d3ee]/20 blur-2xl"></div>
+        <div class="relative rounded-3xl border border-white/10 bg-[#0d121a]/70 p-5 shadow-2xl ring-primary">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-[12px] text-white/60">
+              <span class="h-2 w-2 rounded-full bg-[#ff5f56]"></span>
+              <span class="h-2 w-2 rounded-full bg-[#ffbd2e]"></span>
+              <span class="h-2 w-2 rounded-full bg-[#27c93f]"></span>
+              <span class="ml-2">cloudflare-blog / index.html</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#preview-code">复制示例</button>
+            </div>
+          </div>
+
+          <div id="preview-code" class="mt-4 rounded-2xl overflow-hidden border border-white/10">
+            <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+              <span>静态页面预览（示例）</span>
+              <span class="text-white/40">HTML + Tailwind</span>
+            </div>
+            <pre class="m-0 p-4 text-[12px] leading-relaxed"><code>&lt;!doctype html&gt;
+&lt;html lang="zh-CN"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta name="viewport" content="width=device-width,initial-scale=1"/&gt;
+    &lt;title&gt;我的博客&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body class="bg-[#0b0f14] text-[#e6edf3] antialiased"&gt;
+    &lt;header class="mx-auto max-w-3xl px-6 py-10"&gt;
+      &lt;h1 class="text-3xl font-extrabold tracking-tight"&gt;我的个人博客&lt;/h1&gt;
+      &lt;p class="mt-3 text-white/70"&gt;使用 Cloudflare Pages 部署的超快静态博客。&lt;/p&gt;
+    &lt;/header&gt;
+    &lt;main class="mx-auto max-w-3xl px-6 pb-16 space-y-8"&gt;
+      &lt;article class="rounded-2xl border border-white/10 bg-white/5 p-6"&gt;
+        &lt;h2 class="text-xl font-semibold"&gt;第一篇文章&lt;/h2&gt;
+        &lt;p class="mt-2 text-white/70"&gt;用 Markdown 写内容，交给 Astro/Hugo 生成静态文件，最后由 Cloudflare Pages 一键发布。&lt;/p&gt;
+        &lt;a class="mt-4 inline-flex items-center gap-2 text-[#7aa2ff] hover:underline" href="#"&gt;阅读全文 →&lt;/a&gt;
+      &lt;/article&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="mini-card p-3">
+              <div class="text-[12px] text-white/60">自动构建</div>
+              <div class="mt-1 text-[13px]">Git 推送 → Cloudflare Pages 自动构建并发布</div>
+            </div>
+            <div class="mini-card p-3">
+              <div class="text-[12px] text-white/60">全球加速</div>
+              <div class="mt-1 text-[13px]">全球边缘缓存，首屏速度飞快</div>
+            </div>
+            <div class="mini-card p-3">
+              <div class="text-[12px] text-white/60">自定义域名</div>
+              <div class="mt-1 text-[13px]">一键绑定与HTTPS</div>
+            </div>
+            <div class="mini-card p-3">
+              <div class="text-[12px] text-white/60">低成本</div>
+              <div class="mt-1 text-[13px]">个人博客通常零成本</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics strip -->
+    <div class="mx-auto max-w-7xl px-4 pb-8">
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur">
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">预计上线时间</div>
+            <div class="mt-1 text-[15px] font-semibold">20–40 分钟</div>
+          </div>
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">构建框架</div>
+            <div class="mt-1 text-[15px] font-semibold">Astro / Hugo</div>
+          </div>
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">托管</div>
+            <div class="mt-1 text-[15px] font-semibold">Cloudflare Pages</div>
+          </div>
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">源码</div>
+            <div class="mt-1 text-[15px] font-semibold">GitHub / GitLab</div>
+          </div>
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">域名</div>
+            <div class="mt-1 text-[15px] font-semibold">自带或自购</div>
+          </div>
+          <div class="rounded-xl bg-white/5 p-3 border border-white/10">
+            <div class="text-[11px] text-white/60">成本</div>
+            <div class="mt-1 text-[15px] font-semibold">0 元起</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Layout -->
+  <main class="mx-auto max-w-7xl px-4 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_280px] gap-8">
+    <!-- Left TOC (desktop) -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-24">
+        <nav class="toc rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-[12px] uppercase tracking-wider text-white/50 mb-3">目录</div>
+          <ul class="space-y-2 text-[14px]">
+            <li><a href="#overview">概览：方案与能力</a></li>
+            <li><a href="#quickstart">极速起步（15分钟）</a></li>
+            <li><a href="#structure">站点结构与文件组织</a></li>
+            <li><a href="#markdown">Markdown 写作规范</a></li>
+            <li><a href="#deploy">部署到 Cloudflare Pages</a></li>
+            <li><a href="#domain">绑定自定义域名与HTTPS</a></li>
+            <li><a href="#features">评论｜搜索｜订阅｜分析</a></li>
+            <li><a href="#templates">模板：Astro / Hugo 最小可用</a></li>
+            <li><a href="#seo">SEO 与站点地图</a></li>
+            <li><a href="#perf">性能与缓存策略</a></li>
+            <li><a href="#china">可选：国内访问优化</a></li>
+            <li><a href="#ops">运维、备份与故障处理</a></li>
+            <li><a href="#migration">从其他平台迁移</a></li>
+            <li><a href="#checklist">上线核对清单</a></li>
+            <li><a href="#faq">常见问题</a></li>
+            <li><a href="#resources">进阶资源</a></li>
+          </ul>
+          <div class="divider my-4"></div>
+          <div class="text-[12px] text-white/60">推荐栈</div>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <span class="tag">Astro</span>
+            <span class="tag">Hugo</span>
+            <span class="tag">Markdown</span>
+            <span class="tag">Tailwind</span>
+            <span class="tag">Cloudflare Pages</span>
+          </div>
+        </nav>
+
+        <div class="mt-4 rounded-2xl border border-white/10 bg-gradient-to-br from-[#7aa2ff]/10 to-[#22d3ee]/10 p-4">
+          <div class="text-[13px] font-semibold">快速复制区</div>
+          <div class="mt-3 space-y-2 text-[12px]">
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#wrangler-json">复制 wrangler.json（可选）</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#cf-pages-build">复制 Pages 构建命令</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#robots-txt">复制 robots.txt</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#sitemap-xml">复制 sitemap.xml 模板</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <article class="min-w-0">
+      <!-- Overview -->
+      <section id="overview" class="scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">1</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">概览：方案与能力</h2>
+              <p class="mt-2 text-white/80">
+                我们用静态站点生成器（推荐 <b>Astro</b> 或 <b>Hugo</b>）把 Markdown 文章编译成纯静态 HTML/CSS/JS，
+                再由 <b>Cloudflare Pages</b> 一键部署到全球边缘网络。优势包括：<b>零服务器运维</b>、<b>极速首屏</b>、<b>按需扩缩</b>、
+                <b>免费额度充足</b>。可扩展评论、搜索、RSS/邮件订阅、基础分析等功能。
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="text-[12px] text-white/60">推荐栈 A：Astro</div>
+              <ul class="mt-3 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>组件化 + Markdown/MDX；Tailwind 好用</li>
+                <li>默认静态输出，CSR/SSR 按需启用</li>
+                <li>生态：内容集合、RSS、站点地图插件</li>
+              </ul>
+              <div class="mt-4 text-[12px] text-white/60">适合：现代审美与组件复用需求</div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="text-[12px] text-white/60">推荐栈 B：Hugo</div>
+              <ul class="mt-3 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>编译速度极快，主题生态丰富</li>
+                <li>多语言与内容组织能力强</li>
+                <li>学习曲线低，文档齐全</li>
+              </ul>
+              <div class="mt-4 text-[12px] text-white/60">适合：追求极简与快速出稿</div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="text-[12px] text-white/60">托管与发布</div>
+              <ul class="mt-3 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>Cloudflare Pages：自动构建&回滚</li>
+                <li>自定义域名 + 自动化 HTTPS</li>
+                <li>可选：KV/D1 做简单动态</li>
+              </ul>
+              <div class="mt-4 text-[12px] text-white/60">成本：个人博客通常 0 元</div>
+            </div>
+          </div>
+
+          <div class="callout mt-6">
+            <div class="flex gap-3">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2v8l4 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>
+              <div class="text-[14px]">
+                <b>一句话版部署流程：</b>写 Markdown → 用 Astro/Hugo 生成静态文件 → 连接 Git 仓库 → Cloudflare Pages 自动构建 → 绑定域名 → 完成。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quickstart -->
+      <section id="quickstart" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">2</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">极速起步（15 分钟把博客跑起来）</h2>
+              <p class="mt-2 text-white/80">无需复杂配置，用 Astro 的最小模板即可完成从 0 到上线。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 relative timeline pl-8">
+            <div class="dot"></div>
+            <div class="space-y-6">
+              <!-- Step 1 -->
+              <div class="relative pl-4">
+                <div class="absolute -left-3 top-0 h-6 w-6 rounded-full bg-[#0b0f14] border border-white/20 grid place-items-center text-[11px]">1</div>
+                <h3 class="font-semibold">本地初始化项目（Astro）</h3>
+                <p class="text-[14px] text-white/80 mt-1">在终端执行下列命令创建最小博客骨架：</p>
+                <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                  <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                    <span>Terminal</span>
+                    <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#q1">复制</button>
+                  </div>
+                  <pre id="q1" class="m-0"><code># 使用官方模板创建 Astro 项目
+npm create astro@latest my-blog -- --template basics
+cd my-blog
+
+# 安装依赖
+npm i
+
+# 安装 Tailwind（可选但推荐）
+npx astro add tailwind
+
+# 本地预览
+npm run dev
+</code></pre>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-2 text-[12px]">
+                  <span class="tag">Astro</span>
+                  <span class="tag">Tailwind</span>
+                  <span class="tag">Markdown</span>
+                </div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="relative pl-4">
+                <div class="absolute -left-3 top-0 h-6 w-6 rounded-full bg-[#0b0f14] border border-white/20 grid place-items-center text-[11px]">2</div>
+                <h3 class="font-semibold">添加第一篇博文</h3>
+                <p class="text-[14px] text-white/80 mt-1">在 <code>src/content/posts/</code>（或 <code>src/pages/posts/</code>）下新建 Markdown 文件：</p>
+                <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                  <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                    <span>src/content/posts/hello-world.md</span>
+                    <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#q2">复制</button>
+                  </div>
+                  <pre id="q2" class="m-0"><code>---
+title: "你好，世界！"
+date: 2026-04-27
+tags: ["入门", "Cloudflare", "Astro"]
+description: "在 Cloudflare Pages 上部署第一篇博客。"
+cover: "/images/hello.jpg"
+draft: false
+---
+
+这是我的第一篇博客。
+
+## 为什么选择静态博客？
+
+- 极快：静态文件，天生适合 CDN。
+- 安全：没有后端可以被攻击。
+- 低成本：大多数场景免费。
+
+> 小贴士：后续可接入评论系统与搜索。
+</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="relative pl-4">
+                <div class="absolute -left-3 top-0 h-6 w-6 rounded-full bg-[#0b0f14] border border-white/20 grid place-items-center text-[11px]">3</div>
+                <h3 class="font-semibold">本地预览与构建</h3>
+                <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                  <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                    <span>Terminal</span>
+                    <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#q3">复制</button>
+                  </div>
+                  <pre id="q3" class="m-0"><code># 开发预览
+npm run dev
+
+# 生产构建（输出静态文件）
+npm run build
+
+# 本地预览构建产物
+npm run preview
+</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="relative pl-4">
+                <div class="absolute -left-3 top-0 h-6 w-6 rounded-full bg-[#0b0f14] border border-white/20 grid place-items-center text-[11px]">4</div>
+                <h3 class="font-semibold">推送到 Git 并连接 Cloudflare Pages</h3>
+                <p class="text-[14px] text-white/80 mt-1">新建 GitHub 仓库，把代码推送上去；然后到 Cloudflare 仪表盘创建 Pages 项目并连接该仓库。</p>
+                <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                  <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                    <span>Terminal</span>
+                    <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#q4">复制</button>
+                  </div>
+                  <pre id="q4" class="m-0"><code># 初始化仓库
+git init
+git add -A
+git commit -m "feat: initial blog with Astro"
+
+# 关联远程（用你的仓库地址）
+git branch -M main
+git remote add origin https://github.com/你的用户名/你的仓库.git
+git push -u origin main
+</code></pre>
+                </div>
+
+                <div id="cf-pages-build" class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                  <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Cloudflare Pages 构建设置（参考）</div>
+                  <pre class="m-0"><code>Framework preset: Astro
+Build command:    npm run build
+Output directory: dist
+Node version:     20.x（或 22.x）
+Environment:      Production
+</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 5 -->
+              <div class="relative pl-4">
+                <div class="absolute -left-3 top-0 h-6 w-6 rounded-full bg-[#0b0f14] border border-white/20 grid place-items-center text-[11px]">5</div>
+                <h3 class="font-semibold">（可选）绑定自定义域名</h3>
+                <p class="text-[14px] text-white/80 mt-1">
+                  若你有域名，可在 Pages 项目的 <b>Custom domains</b> 添加域名。
+                  若域名使用 Cloudflare DNS，按向导添加 CNAME 即可；Cloudflare 会自动签发证书。
+                </p>
+                <div class="mt-3 flex flex-wrap gap-2 text-[12px]">
+                  <span class="tag">CNAME</span>
+                  <span class="tag">HTTPS 自动化</span>
+                  <span class="tag">HSTS（可选）</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3 text-[13px]">
+            <div class="mini-card p-4">
+              <div class="text-white/60">常见文件</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li><code>src/content/posts/*.md</code> 博文</li>
+                <li><code>src/pages/index.astro</code> 首页</li>
+                <li><code>src/layouts/Base.astro</code> 基础模板</li>
+              </ul>
+            </div>
+            <div class="mini-card p-4">
+              <div class="text-white/60">包管理</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li>推荐：<code>npm</code> 或 <code>pnpm</code></li>
+                <li>Node 20+ 更稳</li>
+                <li>锁文件纳入版本控制</li>
+              </ul>
+            </div>
+            <div class="mini-card p-4">
+              <div class="text-white/60">部署后检查</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li>首页与列表分页</li>
+                <li>文章详情与图片</li>
+                <li>站内搜索与 404</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Structure -->
+      <section id="structure" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">3</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">站点结构与文件组织（建议）</h2>
+              <p class="mt-2 text-white/80">清晰的目录结构让写作与维护更轻松。下面给出 Astro 与 Hugo 两种布局示例。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <div class="text-[13px] text-white/60 mb-2">Astro 版结构</div>
+              <div class="filetree">
+my-blog/
+├─ public/
+│  ├─ images/                # 封面图、文章插图
+│  └─ favicon.svg
+├─ src/
+│  ├─ content/
+│  │  ├─ posts/              # Markdown/MDX 文章
+│  │  └─ config.ts           # 内容集合配置（可选）
+│  ├─ layouts/
+│  │  ├─ Base.astro          # 基础模板
+│  │  └─ Post.astro          # 文章页模板
+│  ├─ components/
+│  │  ├─ Header.astro
+│  │  ├─ Footer.astro
+│  │  ├─ PostCard.astro
+│  │  └─ GiscusComments.astro
+│  ├─ pages/
+│  │  ├─ index.astro         # 首页
+│  │  ├─ posts/
+│  │  │  └─ [slug].astro     # 动态文章路由
+│  │  ├─ rss.xml.ts          # RSS
+│  │  └─ 404.astro           # 自定义 404
+│  └─ styles/
+│     └─ global.css
+├─ astro.config.mjs
+├─ tailwind.config.js
+├─ package.json
+└─ wrangler.json             # 可选（用于 Pages Functions）
+              </div>
+
+              <div class="mt-4 text-[13px] text-white/70">
+                说明：
+                <ul class="mt-1 list-disc list-inside space-y-1">
+                  <li>文章放 <code>src/content/posts</code>，便于统一 frontmatter 与列表页</li>
+                  <li>组件化头部/底部与 <code>PostCard</code> 便于复用</li>
+                  <li>添加 <code>rss.xml.ts</code> 生成订阅源</li>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-[13px] text-white/60 mb-2">Hugo 版结构</div>
+              <div class="filetree">
+my-blog/
+├─ archetypes/
+│  └─ default.md             # 新文章默认 frontmatter
+├─ assets/                   # 可选：SCSS/图片处理
+├─ content/
+│  ├─ _index.md              # 首页内容
+│  └─ posts/
+│     ├─ first-post.md
+│     └─ second-post.md
+├─ layouts/
+│  ├─ _default/
+│  │  ├─ baseof.html
+│  │  ├─ single.html
+│  │  └─ list.html
+│  └─ partials/
+│     ├─ head.html
+│     ├─ header.html
+│     ├─ footer.html
+│     └─ comments.html
+├─ static/
+│  ├─ images/
+│  └─ favicon.ico
+├─ config.toml               # 配置文件
+└─ build.sh                  # 可选：本地构建脚本
+              </div>
+
+              <div class="mt-4 text-[13px] text-white/70">
+                说明：
+                <ul class="mt-1 list-disc list-inside space-y-1">
+                  <li>Hugo 开箱即用，模板系统成熟</li>
+                  <li>用 <code>archetypes</code> 规范新文章字段</li>
+                  <li>图片放 <code>static/images</code>，引用 <code>/images/...</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 callout">
+            <div class="text-[14px]">
+              <b>文件命名建议：</b>文章文件名用 <code>kebab-case</code>，如 <code>why-static-blog.md</code>；
+              日期可不放文件名，在 frontmatter 管理。统一标签（tags）与分类（categories）有助于归档与导航。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Markdown -->
+      <section id="markdown" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">4</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">Markdown 写作规范与 Frontmatter</h2>
+              <p class="mt-2 text-white/80">用约定好的字段，让列表页、详情页、RSS 与站点地图全自动生成。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="text-[13px] text-white/60 mb-2">推荐 Frontmatter 字段（Astro/Hugo 通用）</div>
+              <pre class="m-0"><code>---
+title: "文章标题"
+description: "简短摘要，用于列表与社交卡片"
+date: 2026-04-27              # 发布日期
+updated: 2026-04-27           # 更新日期（可选）
+tags: ["Cloudflare","Astro"]  # 标签
+categories: ["Web"]           # 分类（可选）
+cover: "/images/cover.jpg"    # 封面图
+slug: "optional-slug"         # 自定义 URL（可选）
+draft: false                  # 草稿标记
+lang: "zh-CN"                 # 语言（多语言可选）
+canonical: ""                 # 原文链接（转载时填写）
+---
+</code></pre>
+              <div class="mt-3 text-[12px] text-white/60">提示：为每个字段在列表与文章页显示对应元素（标签云、更新时间等）。</div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="text-[13px] text-white/60 mb-2">写作风格与媒体管理</div>
+              <ul class="mt-1 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>标题层级从 H2 开始，避免跳级</li>
+                <li>段落控制在 3–5 行，列表化要点</li>
+                <li>图片放 <code>/images/...</code>，使用相对路径</li>
+                <li>代码块标注语言，采用行内注释说明关键点</li>
+                <li>多媒体：优先静态图，视频用封面图 + 外链</li>
+              </ul>
+
+              <div class="mt-4 text-[13px] text-white/60">Markdown 引用与表格示例：</div>
+              <pre class="mt-2 m-0"><code>&gt; 这是一条引用，常用于提示或结论总结。
+
+| 工具 | 作用 | 建议 |
+| --- | --- | --- |
+| Astro | 组件化 + MDX | 追求现代体验 |
+| Hugo | 超快构建 | 重内容轻交互 |
+</code></pre>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div class="text-[13px] text-white/60 mb-2">图床与图片优化</div>
+            <ul class="mt-1 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+              <li>优先仓库内 <code>/public/images</code> 管理，也可用 Git LFS 或对象存储</li>
+              <li>导出时用合适尺寸（首页 1200×630，文章内 1600px 宽度足够）</li>
+              <li>文件名用英文短横分隔：<code>cover-cloudflare-pages.jpg</code></li>
+              <li>可启用 Cloudflare Image Resizing（可选进阶）</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Deploy -->
+      <section id="deploy" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">5</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">部署到 Cloudflare Pages</h2>
+              <p class="mt-2 text-white/80">Pages 会监听你的 Git 仓库：每次推送 <code>main</code> 分支即自动构建与发布，并提供预览环境。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">在 Cloudflare 控制台创建 Pages 项目</h3>
+              <ol class="mt-3 num-list text-[14px] text-white/80 list-decimal list-inside">
+                <li>登录 Cloudflare → <b>Workers & Pages</b> → <b>Create application</b> → <b>Pages</b> → <b>Connect to Git</b>。</li>
+                <li>选择你的仓库与分支（通常是 <code>main</code>）。</li>
+                <li>选择预设（Astro），确认构建命令与输出路径：</li>
+              </ol>
+
+              <div id="pages-settings" class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Pages 构建配置（Astro 示例）</div>
+                <pre class="m-0"><code>Framework preset: Astro
+Build command:    npm ci && npm run build
+Output directory: dist
+Node version:     20.x（或 22.x）
+Environment:      Production
+Install command:  npm ci
+</code></pre>
+              </div>
+
+              <div class="mt-4 callout">
+                <div class="text-[14px]">
+                  <b>提示：</b>若构建失败，首先到 <b>Deployments</b> 查看日志，常见原因：Node 版本不匹配、缺少依赖、路径错误。
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="font-semibold">自定义环境变量（按需）</h4>
+                <p class="text-[14px] text-white/80 mt-1">例如站点标题、分析 ID 等，可在 Pages 项目的 <b>Settings → Environment variables</b> 中添加。</p>
+                <pre class="mt-2"><code># 示例：仅在生产环境生效（在 UI 中配置）
+SITE_TITLE="我的博客"
+UMAMI_WEBSITE_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+</code></pre>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">（可选）wrangler.json 配置 Pages Functions/路由</h3>
+              <p class="text-[14px] text-white/80 mt-1">若需要轻量动态能力（如 API）或自定义重写，可加入 <code>wrangler.json</code>。</p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                  <span>wrangler.json</span>
+                  <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#wrangler-json">复制</button>
+                </div>
+                <pre id="wrangler-json" class="m-0"><code>{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-blog",
+  "compatibility_date": "2025-09-01",
+  "pages_build_output_dir": "dist",
+  "routes": [
+    { "pattern": "/*", "zone_name": "你的域名（可选）" }
+  ]
+}
+</code></pre>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="font-semibold">预览与回滚</h4>
+                <ul class="mt-2 space-y-1 text-[14px] text-white/80 list-disc list-inside">
+                  <li>每次推送会生成 <b>Preview</b> 与 <b>Production</b> 环境</li>
+                  <li>可一键 <b>Rollback</b> 到上一个稳定部署</li>
+                  <li>可在 GitHub PR 开启自动预览链接</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="text-[13px] text-white/60 mb-1">常见构建命令（参考）</div>
+                <pre class="m-0"><code># Astro
+npm ci
+npm run build   # 输出到 ./dist
+
+# Hugo
+hugo --gc --minify   # 输出到 ./public（在 Pages 设置里改为 public）
+</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Domain -->
+      <section id="domain" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">6</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">绑定自定义域名与 HTTPS</h2>
+              <p class="mt-2 text-white/80">让博客通过你的域名访问，并自动启用 HTTPS。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">在 Pages 绑定域名</h3>
+              <ol class="mt-2 num-list text-[14px] text-white/80 list-decimal list-inside">
+                <li>Pages 项目 → <b>Custom domains</b> → <b>Set up a custom domain</b>。</li>
+                <li>输入域名（如 <code>blog.example.com</code> 或 <code>example.com</code>）。</li>
+                <li>若域名在 Cloudflare 管理，按向导添加 <b>CNAME</b> 记录；否则在你的 DNS 商添加记录。</li>
+                <li>等待验证通过，系统自动部署证书。</li>
+              </ol>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">DNS 记录示例</div>
+                <pre class="m-0"><code># 子域名形式（推荐）
+blog.example.com   CNAME   your-project.pages.dev.
+
+# 根域名（取决于 DNS 商是否支持 CNAME 扁平化或 ALIAS）
+example.com        CNAME   your-project.pages.dev.   # 部分 DNS 支持
+# 或使用 A/AAAA 记录（按 Pages 提供的目标）
+</code></pre>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">安全与重定向</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>启用 <b>Always Use HTTPS</b>（Cloudflare 自动）</li>
+                <li>可开启 <b>HSTS</b> 增强安全性（谨慎，需确保全站 HTTPS）</li>
+                <li>如需旧链接迁移，使用 <b>_redirects</b> 或 <b>项目设置中的重定向</b></li>
+              </ul>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">_redirects 示例（放在输出根目录）</div>
+                <pre class="m-0"><code># 从旧路径跳转到新路径
+/old-path   /new-path   301!
+
+# 强制 www 到非 www（或反之）
+# www.example.com/*   https://example.com/:splat   301!
+</code></pre>
+              </div>
+
+              <div class="mt-4 text-[12px] text-white/60">
+                小贴士：绑定域名后，前往 <b>Search Console</b>、<b>Bing Webmaster</b> 提交站点与 sitemap。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">7</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">常用功能增强：评论｜搜索｜订阅｜分析</h2>
+              <p class="mt-2 text-white/80">在静态站点上用轻量外部服务补足动态能力。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Comments -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-6 rounded-lg bg-white/5 border border-white/10 grid place-items-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" stroke="currentColor" stroke-width="1.6"/></svg>
+                </span>
+                <h3 class="font-semibold">评论系统（推荐：Giscus）</h3>
+              </div>
+              <p class="mt-2 text-[14px] text-white/80">
+                Giscus 基于 GitHub Discussions，零后端、开源、样式跟随站点。
+              </p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">在文章页插入（Astro 组件示例）</div>
+                <pre class="m-0"><code>&lt;!-- src/components/GiscusComments.astro --&gt;
+&lt;section class="mt-10"&gt;
+  &lt;script
+    src="https://giscus.app/client.js"
+    data-repo="你的用户名/你的仓库"
+    data-repo-id="你的仓库ID"
+    data-category="General"
+    data-category-id="分类ID"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="dark"
+    data-lang="zh-CN"
+    crossorigin="anonymous"
+    async&gt;
+  &lt;/script&gt;
+&lt;/section&gt;
+</code></pre>
+              </div>
+
+              <div class="mt-3 text-[12px] text-white/60">
+                获取 <code>repo-id</code> 与 <code>category-id</code>：在 Giscus 官网按向导生成脚本即可。
+              </div>
+
+              <div class="mt-4">
+                <div class="text-[13px] text-white/60 mb-1">替代方案</div>
+                <ul class="text-[14px] text-white/80 list-disc list-inside space-y-1">
+                  <li>Utterances（更简单，但样式可定制性低）</li>
+                  <li>Waline / Twikoo（需自建后端或使用它们的云服务）</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Search -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-6 rounded-lg bg-white/5 border border-white/10 grid place-items-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <h3 class="font-semibold">站内搜索（Pagefind /  Algolia）</h3>
+              </div>
+              <p class="mt-2 text-[14px] text-white/80">
+                Pagefind 完全静态、离线可用，适合个人博客；Algolia 体验最好，但有免费额度限制。
+              </p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Pagefind 接入（构建后索引）</div>
+                <pre class="m-0"><code># 安装
+npm i -D pagefind
+
+# 在构建后运行索引（package.json）
+"scripts": {
+  "build": "astro build",
+  "postbuild": "npx pagefind --site dist --glob \"**/*.html\""
+}
+
+# 在前端引入搜索 UI（示例放 public/pagefind/pagefind-ui.js）
+&lt;link href="/pagefind/pagefind-ui.css" rel="stylesheet"&gt;
+&lt;script src="/pagefind/pagefind-ui.js"&gt;&lt;/script&gt;
+&lt;div id="search"&gt;&lt;/div&gt;
+&lt;script&gt;
+  new PagefindUI({ element: "#search", showSubResults: true });
+&lt;/script&gt;
+</code></pre>
+              </div>
+            </div>
+
+            <!-- RSS & Subscription -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-6 rounded-lg bg-white/5 border border-white/10 grid place-items-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 11a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="1.6"/><path d="M4 4a16 16 0 0 1 16 16" stroke="currentColor" stroke-width="1.6"/><circle cx="6" cy="18" r="2" fill="currentColor"/></svg>
+                </span>
+                <h3 class="font-semibold">RSS 与订阅</h3>
+              </div>
+              <p class="mt-2 text-[14px] text-white/80">
+                生成 RSS/Atom，并在页脚显示订阅入口；可配合 Buttondown/ConvertKit 收集邮件。
+              </p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Astro 生成 RSS（src/pages/rss.xml.ts）</div>
+                <pre class="m-0"><code>import rss from '@astrojs/rss';
+import { getCollection } from 'astro:content';
+
+export async function GET(context) {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  posts.sort((a, b) => b.data.date - a.data.date);
+
+  return rss({
+    title: '我的博客',
+    description: '技术与生活记录',
+    site: context.site,
+    items: posts.map((p) =&gt; ({
+      title: p.data.title,
+      pubDate: p.data.date,
+      description: p.data.description,
+      link: `/posts/${p.slug}/`,
+      guid: `/posts/${p.slug}/`
+    })),
+    customData: `&lt;language&gt;zh-CN&lt;/language&gt;`,
+  });
+}
+</code></pre>
+              </div>
+
+              <div class="mt-3 text-[12px] text-white/60">在页脚加上 RSS 图标与链接：<code>/rss.xml</code>。</div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-6 rounded-lg bg-white/5 border border-white/10 grid place-items-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18" stroke="currentColor" stroke-width="1.6"/><path d="M7 13l3-3 3 3 4-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <h3 class="font-semibold">基础分析（Cloudflare Web Analytics / Umami）</h3>
+              </div>
+              <p class="mt-2 text-[14px] text-white/80">
+                隐私友好且不影响性能：可直接粘贴脚本到 <code>&lt;head&gt;</code>。
+              </p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Cloudflare Web Analytics（示例）</div>
+                <pre class="m-0"><code>&lt;!-- 放在 </code>head<code> 结束前 --&gt;
+&lt;script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon='{"token": "YOUR_TOKEN"}'&gt;&lt;/script&gt;
+</code></pre>
+              </div>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50">Umami（自托管或云服务）</div>
+                <pre class="m-0"><code>&lt;script defer src="https://your-umami-domain/umami.js"
+  data-website-id="YOUR_WEBSITE_ID"&gt;&lt;/script&gt;
+</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 callout">
+            <div class="text-[14px]">
+              <b>组合建议：</b>先上 Giscus + RSS，后续按需加 Pagefind 与分析脚本。保持静态为主，避免引入过多第三方脚本。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Templates -->
+      <section id="templates" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">8</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">模板：Astro / Hugo 最小可用示例</h2>
+              <p class="mt-2 text-white/80">复制即可用，包含首页、列表、文章详情与基础布局。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Astro -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c]">
+              <div class="px-5 pt-5">
+                <div class="flex items-center justify-between">
+                  <div class="text-[13px] text-white/60">Astro：基础布局（src/layouts/Base.astro）</div>
+                  <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#astro-base">复制</button>
+                </div>
+              </div>
+              <pre id="astro-base" class="m-0 p-5"><code>---
+// src/layouts/Base.astro
+const { title = '我的博客', description = '技术与生活记录' } = Astro.props;
+---
+&lt;!doctype html&gt;
+&lt;html lang="zh-CN"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta name="viewport" content="width=device-width,initial-scale=1"/&gt;
+    &lt;title&gt;{title}&lt;/title&gt;
+    &lt;meta name="description" content={description}/&gt;
+    &lt;link rel="icon" href="/favicon.svg"/&gt;
+    &lt;link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml"/&gt;
+    &lt;!-- 分析脚本可放这里 --&gt;
+  &lt;/head&gt;
+  &lt;body class="bg-[#0b0f14] text-[#e6edf3] antialiased"&gt;
+    &lt;header class="mx-auto max-w-5xl px-6 py-8 flex items-center justify-between"&gt;
+      &lt;a href="/" class="text-xl font-extrabold tracking-tight"&gt;我的博客&lt;/a&gt;
+      &lt;nav class="flex items-center gap-5 text-[14px] text-white/80"&gt;
+        &lt;a href="/posts" class="hover:text-white"&gt;文章&lt;/a&gt;
+        &lt;a href="/about" class="hover:text-white"&gt;关于&lt;/a&gt;
+        &lt;a href="/rss.xml" class="hover:text-white"&gt;RSS&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main class="mx-auto max-w-5xl px-6 pb-16"&gt;
+      &lt;slot/&gt;
+    &lt;/main&gt;
+
+    &lt;footer class="border-t border-white/10"&gt;
+      &lt;div class="mx-auto max-w-5xl px-6 py-10 text-[13px] text-white/60 flex items-center justify-between"&gt;
+        &lt;span&gt;© {new Date().getFullYear()} 我的博客&lt;/span&gt;
+        &lt;div class="flex items-center gap-4"&gt;
+          &lt;a href="https://github.com/你的用户名" class="hover:text-white"&gt;GitHub&lt;/a&gt;
+          &lt;a href="/rss.xml" class="hover:text-white"&gt;RSS&lt;/a&gt;
+          &lt;span&gt;Powered by Astro + Cloudflare Pages&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/footer&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+            </div>
+
+            <!-- Post page & card -->
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c]">
+              <div class="px-5 pt-5">
+                <div class="flex items-center justify-between">
+                  <div class="text-[13px] text-white/60">Astro：文章卡片与详情</div>
+                  <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#astro-post">复制</button>
+                </div>
+              </div>
+              <pre id="astro-post" class="m-0 p-5"><code>&lt;!-- src/components/PostCard.astro --&gt;
+---
+const { post } = Astro.props;
+const { title, description, date, tags, cover } = post.data;
+---
+&lt;article class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"&gt;
+  {cover && (
+    &lt;a href={`/posts/${post.slug}/`} class="block"&gt;
+      &lt;img src={cover} alt="" class="w-full h-48 object-cover"/&gt;
+    &lt;/a&gt;
+  )}
+  &lt;div class="p-5"&gt;
+    &lt;h3 class="text-lg font-semibold"&gt;
+      &lt;a href={`/posts/${post.slug}/`} class="hover:underline"&gt;{title}&lt;/a&gt;
+    &lt;/h3&gt;
+    &lt;p class="mt-2 text-white/70 text-[14px] line-clamp-2"&gt;{description}&lt;/p&gt;
+    &lt;div class="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-white/60"&gt;
+      &lt;time datetime={date.toISOString()}&gt;{date.toLocaleDateString()}&lt;/time&gt;
+      {tags?.map(tag =&gt; (
+        &lt;span class="tag"&gt;#{tag}&lt;/span&gt;
+      ))}
+    &lt;/div&gt;
+    &lt;a class="mt-4 inline-flex items-center gap-2 text-[#7aa2ff] hover:underline"
+       href={`/posts/${post.slug}/`}&gt;阅读全文 →&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/article&gt;
+
+&lt;!-- src/pages/posts/[slug].astro --&gt;
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, getEntryBySlug } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) =&gt; !data.draft);
+  return posts.map((p) =&gt; ({ params: { slug: p.slug }, props: { post: p }}));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { title, description, date, tags, cover } = post.data;
+---
+&lt;Base title={title} description={description}&gt;
+  &lt;article class="mx-auto max-w-3xl"&gt;
+    {cover && &lt;img src={cover} alt="" class="w-full rounded-2xl border border-white/10"/&gt;}
+    &lt;h1 class="mt-6 text-3xl md:text-4xl font-extrabold tracking-tight"&gt;{title}&lt;/h1&gt;
+    &lt;div class="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-white/60"&gt;
+      &lt;time datetime={date.toISOString()}&gt;{date.toLocaleDateString()}&lt;/time&gt;
+      {tags?.map(t =&gt; &lt;span class="tag"&gt;#{t}&lt;/span&gt;)}
+    &lt;/div&gt;
+    &lt;div class="prose prose-invert mt-8 max-w-none"&gt;
+      &lt;Content /&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Giscus 评论（可选） --&gt;
+    &lt;div class="mt-12"&gt;
+      &lt;script
+        src="https://giscus.app/client.js"
+        data-repo="你的用户名/你的仓库"
+        data-repo-id="你的仓库ID"
+        data-category="General"
+        data-category-id="分类ID"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async&gt;&lt;/script&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/Base&gt;
+</code></pre>
+            </div>
+          </div>
+
+          <!-- Hugo 配置 -->
+          <div class="mt-6 rounded-2xl border border-white/10 bg-[#0e141c]">
+            <div class="px-5 pt-5">
+              <div class="flex items-center justify-between">
+                <div class="text-[13px] text-white/60">Hugo：config.toml（示例）</div>
+                <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#hugo-config">复制</button>
+              </div>
+            </div>
+            <pre id="hugo-config" class="m-0 p-5"><code># config.toml
+baseURL = "https://your-domain/"
+languageCode = "zh-CN"
+title = "我的博客"
+theme = "ananke" # 或其他你喜欢的主题
+hasCJKLanguage = true
+paginate = 10
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[params]
+  description = "技术与生活记录"
+  author = "你的名字"
+  github = "https://github.com/你的用户名"
+  rss = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true   # 需要时允许原生 HTML（如嵌入视频）
+
+[outputs]
+  home = ["HTML","RSS","JSON"]
+
+[mediaTypes]
+  [mediaTypes."application/manifest+json"]
+    suffix = "webmanifest"
+
+[outputFormats]
+  [outputFormats.WebAppManifest]
+    mediaType = "application/manifest+json"
+    baseName = "manifest"
+</code></pre>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-[13px]">
+            <div class="mini-card p-4">
+              <div class="text-white/60">首页要点</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li>最新文章列表 + 分页</li>
+                <li>标签云 / 分类导航</li>
+                <li>站内搜索入口</li>
+              </ul>
+            </div>
+            <div class="mini-card p-4">
+              <div class="text-white/60">文章页要点</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li>标题、日期、封面、标签</li>
+                <li>目录（可选）</li>
+                <li>评论与上一篇/下一篇</li>
+              </ul>
+            </div>
+            <div class="mini-card p-4">
+              <div class="text-white/60">页脚与全局</div>
+              <ul class="mt-2 space-y-1 text-white/80">
+                <li>RSS/社交链接</li>
+                <li>版权与协议</li>
+                <li>站点地图链接</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEO -->
+      <section id="seo" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">9</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">SEO 与站点地图</h2>
+              <p class="mt-2 text-white/80">把该做的都做好，剩下的交给时间。基础 SEO 包含标题、描述、结构化数据与站点地图。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">页面基础 SEO</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>每页唯一 <code>&lt;title&gt;</code> 与 <code>&lt;meta name="description"&gt;</code></li>
+                <li>使用语义化标题（H1/H2…）与良好的可访问性</li>
+                <li>首屏关键内容尽早上屏，避免大块阻塞</li>
+                <li>图片加 <code>alt</code>，使用合适尺寸与压缩</li>
+                <li>面包屑与标签页有助于内链</li>
+              </ul>
+
+              <div class="mt-4 text-[13px] text-white/60">Open Graph / Twitter 卡片</div>
+              <pre class="mt-2"><code>&lt;meta property="og:type" content="article"/&gt;
+&lt;meta property="og:title" content="文章标题"/&gt;
+&lt;meta property="og:description" content="一句话摘要"/&gt;
+&lt;meta property="og:image" content="https://你的域名/og/cover.jpg"/&gt;
+&lt;meta name="twitter:card" content="summary_large_image"/&gt;
+</code></pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">robots.txt 与 sitemap.xml</h3>
+              <p class="text-[14px] text-white/80 mt-1">帮助搜索引擎发现与索引你的内容。</p>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                  <span>public/robots.txt</span>
+                  <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#robots-txt">复制</button>
+                </div>
+                <pre id="robots-txt" class="m-0"><code>User-agent: *
+Allow: /
+Sitemap: https://你的域名/sitemap.xml
+</code></pre>
+              </div>
+
+              <div class="mt-3 rounded-2xl border border-white/10 overflow-hidden">
+                <div class="bg-[#0a0e13] px-4 py-2 text-[12px] text-white/50 flex items-center justify-between">
+                  <span>public/sitemap.xml（或在 Astro 动态生成）</span>
+                  <button class="copy-btn text-[12px] rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 hover:bg-white/10" data-copy="#sitemap-xml">复制</button>
+                </div>
+                <pre id="sitemap-xml" class="m-0"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://你的域名/&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://你的域名/posts/你好世界/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-04-27&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;
+</code></pre>
+              </div>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="text-[13px] text-white/60 mb-1">提交与验证</div>
+                <ul class="text-[14px] text-white/80 list-disc list-inside space-y-1">
+                  <li>Google Search Console、Bing Webmaster 提交 sitemap</li>
+                  <li>启用结构化数据：<code>Article</code>、<code>BlogPosting</code>（可选）</li>
+                  <li>定期检查抓取错误与索引覆盖率</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Performance -->
+      <section id="perf" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">10</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">性能与缓存策略</h2>
+              <p class="mt-2 text-white/80">让首屏秒开，后续交互顺滑。静态站点 + Cloudflare 的默认缓存已经很好，按需再优化。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">前端性能</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>图片：合适尺寸、现代格式、懒加载（<code>loading="lazy"</code>）</li>
+                <li>字体：子集化，<code>font-display: swap</code></li>
+                <li>减少第三方脚本，或延迟/按需加载</li>
+                <li>组件级别按需水合（Astro 优势）</li>
+                <li>长列表分页，避免一次性渲染</li>
+              </ul>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">图片懒加载与占位</div>
+                <pre class="m-0"><code>&lt;img
+  src="/images/cover-1200.jpg"
+  srcset="/images/cover-800.jpg 800w, /images/cover-1200.jpg 1200w"
+  sizes="(max-width: 768px) 100vw, 800px"
+  alt="封面图"
+  loading="lazy"
+  decoding="async"
+  class="w-full h-auto rounded-2xl"
+/&gt;
+</code></pre>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">Cloudflare 缓存与规则</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>静态资源（<code>.css/.js/.png/.jpg/.svg</code>）长缓存（1年）</li>
+                <li>HTML 适中缓存（几分钟到一小时），避免用户看到陈旧内容</li>
+                <li>利用 <b>Cache Everything</b>（Pages 场景通常已优化）</li>
+                <li>服务端重定向与 404 统一，避免软 404</li>
+              </ul>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">可选：_headers（设置缓存头）</div>
+                <pre class="m-0"><code># public/_headers
+/*
+  Cache-Control: public, max-age=300, s-maxage=3600
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+</code></pre>
+              </div>
+
+              <div class="mt-4 text-[12px] text-white/60">
+                提醒：若开启长缓存，上线内容时注意版本化文件名或清理缓存。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- China Access -->
+      <section id="china" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">11</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">可选：国内访问优化</h2>
+              <p class="mt-2 text-white/80">Cloudflare 在国内直连时体验可能受跨境网络影响，可根据需求选择以下方案。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">方案 A：轻度优化（推荐）</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>减少第三方脚本与字体请求</li>
+                <li>图片托管在同一域名，减少跨域</li>
+                <li>开启 brotli/gzip（Cloudflare 默认）</li>
+                <li>适当缩短 HTML 缓存时间，回源更快</li>
+              </ul>
+              <div class="mt-3 text-[12px] text-white/60">优点：简单、无额外成本；缺点：对跨境链路问题改善有限。</div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">方案 B：双栈发布（进阶）</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>将静态产物同步到国内对象存储/托管（如对象存储 + CDN）</li>
+                <li>使用二级域名区分：<code>blog.example.com</code>（全球），<code>cn.example.com</code>（国内）</li>
+                <li>在文章中避免跨境依赖（字体、脚本、评论等）</li>
+                <li>可将评论设置为仅全球域名展示</li>
+              </ul>
+              <div class="mt-3 text-[12px] text-white/60">优点：国内访问更稳；缺点：需要额外部署与维护。</div>
+            </div>
+          </div>
+
+          <div class="mt-6 callout">
+            <div class="text-[14px]">
+              <b>务实建议：</b>先用方案 A 跑通与稳定内容，再按需评估是否上方案 B。保持构建与发布流程自动化，避免“双栈不一致”。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ops -->
+      <section id="ops" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">12</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">运维、备份与故障处理</h2>
+              <p class="mt-2 text-white/80">静态站点的运维成本低，但也要有备份与回滚策略。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">日常运维</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>内容即代码：所有 Markdown/Photo/配置纳入 Git</li>
+                <li>使用 Pull Request 流程，启用预览链接</li>
+                <li>保持依赖及时更新，避免大版本滞后</li>
+                <li>留意 Pages 构建日志与失败通知</li>
+              </ul>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">推荐分支策略</div>
+                <pre class="m-0"><code>main        # 生产分支（Pages 构建来源）
+feat/*      # 新功能与文章草稿
+fix/*       # 修复
+release/*   # 发布候选（需要时）
+</code></pre>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">备份与灾备</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>仓库多地镜像（GitHub + GitLab/其他）</li>
+                <li>本地克隆并定期拉取</li>
+                <li>图片/媒体单独备份（仓库或对象存储）</li>
+                <li>保留旧部署的快照（Pages 支持回滚）</li>
+              </ul>
+
+              <div class="mt-4 rounded-2xl border border-white/10 bg-[#0e141c] p-4">
+                <div class="text-[13px] text-white/60 mb-1">常见故障与排查</div>
+                <ul class="text-[14px] text-white/80 list-disc list-inside space-y-1">
+                  <li>构建失败：检查 Node 版本、lock 文件、路径</li>
+                  <li>图片/链接 404：检查大小写与相对路径</li>
+                  <li>缓存陈旧：清理 Pages 缓存或等待 TTL</li>
+                  <li>评论不加载：检查网络与第三方脚本</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Migration -->
+      <section id="migration" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">13</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">从其他平台迁移</h2>
+              <p class="mt-2 text-white/80">把旧内容搬过来，设置好重定向与图片路径映射。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold">迁移流程</h3>
+              <ol class="mt-2 num-list text-[14px] text-white/80 list-decimal list-inside">
+                <li>导出旧文章为 Markdown（或用脚本转换）</li>
+                <li>统一 frontmatter 字段与图片路径</li>
+                <li>本地构建与校验，修复断链</li>
+                <li>配置 <code>_redirects</code> 保持旧 URL 可用</li>
+                <li>提交新站点并上线，保留旧站一段时间</li>
+              </ol>
+            </div>
+
+            <div>
+              <h3 class="font-semibold">重定向示例</h3>
+              <pre class="mt-2"><code># WordPress 老路径
+/2023/04/old-slug/    /posts/new-slug/    301!
+
+# 分类/标签变更
+/tag/old-tag          /tags/new-tag       301!
+</code></pre>
+              <div class="mt-3 text-[12px] text-white/60">
+                之后到 Search Console 提交更改地址与新的站点地图。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Checklist -->
+      <section id="checklist" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">14</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">上线核对清单</h2>
+              <p class="mt-2 text-white/80">发布前快速过一遍，避免低级失误。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">首页与列表页正常，文章可点开</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">所有图片与静态资源可访问</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">RSS 订阅链接有效（<code>/rss.xml</code>）</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">sitemap 与 robots.txt 已就位</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">OG/Twitter 卡片信息正确</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">评论与搜索（如使用）加载正常</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">自定义域名与 HTTPS 正常</span>
+            </label>
+            <label class="mini-card p-4 flex items-start gap-3">
+              <input type="checkbox" class="mt-1">
+              <span class="text-[14px]">404 页面友好且可返回首页</span>
+            </label>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#quickstart" class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-[#7aa2ff] to-[#22d3ee] px-5 py-3 text-[#06121f] font-semibold">
+              再看一遍快速起步
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </a>
+            <a href="#templates" class="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-[14px] hover:bg-white/10">
+              复制模板代码
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">15</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">常见问题（FAQ）</h2>
+              <p class="mt-2 text-white/80">把最容易踩的坑先列出来。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-3">
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">我需要自己买服务器吗？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <p class="mt-3 text-[14px] text-white/80">不需要。Cloudflare Pages 为静态站点提供托管与全球加速，个人博客通常在免费额度内。</p>
+            </details>
+
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">构建总是失败怎么办？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <div class="mt-3 text-[14px] text-white/80 space-y-2">
+                <p>优先看 Pages 的构建日志。常见原因：</p>
+                <ul class="list-disc list-inside">
+                  <li>Node 版本不一致：与本地保持一致（20.x 或 22.x）</li>
+                  <li>依赖未锁定：确保有 <code>package-lock.json</code> / <code>pnpm-lock.yaml</code></li>
+                  <li>路径错误：输出目录应与 Pages 设置一致（Astro 是 <code>dist</code>，Hugo 是 <code>public</code>）</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">如何实现评论与搜索？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <p class="mt-3 text-[14px] text-white/80">
+                评论可用 Giscus（基于 GitHub Discussions），搜索可用 Pagefind（完全静态）或 Algolia（体验更好但需配额）。
+              </p>
+            </details>
+
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">国内访问不理想怎么办？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <p class="mt-3 text-[14px] text-white/80">
+                先减少第三方资源与字体，优化图片；若仍不满足，再考虑双栈发布（同步到国内 CDN）。本指南已提供两种方案与注意事项。
+              </p>
+            </details>
+
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">如何迁移老文章与链接？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <p class="mt-3 text-[14px] text-white/80">
+                导出为 Markdown，统一 frontmatter 与图片路径；用 <code>_redirects</code> 保留旧 URL，并在搜索控制台提交新的 sitemap。
+              </p>
+            </details>
+
+            <details class="group rounded-2xl border border-white/10 bg-[#0e141c] p-4 open:bg-white/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between">
+                <span class="font-medium">我能用自己的域名吗？</span>
+                <span class="chev transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </summary>
+              <p class="mt-3 text-[14px] text-white/80">
+                可以。在 Pages 项目添加 Custom domain，按指引设置 CNAME（或 A/AAAA），系统会自动签发 HTTPS 证书。
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resources -->
+      <section id="resources" class="mt-8 scroll-mt-24">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div class="flex items-start gap-3">
+            <div class="step-badge">16</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight">进阶资源与参考清单</h2>
+              <p class="mt-2 text-white/80">想继续深挖？从这些方向入手。</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">内容与体验</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>写作模板：如何写“可长期阅读”的技术文章</li>
+                <li>视觉系统：排版尺度、色彩、留白与层次</li>
+                <li>组件库：可复用的 <code>Callout</code>、<code>Note</code>、<code>Figure</code></li>
+                <li>多语言与国际化（Astro/Hugo 都有方案）</li>
+              </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">性能与运维</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>Lighthouse 指标优化（LCP/CLS/INP）</li>
+                <li>图片工作流：自动化压缩与响应式尺寸</li>
+                <li>自动化：GitHub Actions + Pages</li>
+                <li>监控：错误日志、可用性巡检</li>
+              </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">扩展能力</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>轻量表单：表单服务（如 Tally、Formspree）</li>
+                <li>订阅与邮件：Buttondown / ConvertKit</li>
+                <li>进阶搜索：Algolia 集成</li>
+                <li>数据可视化：静态图表或按需水合</li>
+              </ul>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0e141c] p-5">
+              <h3 class="font-semibold">社区与协作</h3>
+              <ul class="mt-2 space-y-2 text-[14px] text-white/80 list-disc list-inside">
+                <li>内容评审：PR + 预览链接流程</li>
+                <li>贡献指南：CONTRIBUTING.md 与模板</li>
+                <li>开放协议：版权与转载说明（CC 许可）</li>
+                <li>社媒分发：卡片与剪裁</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-6 callout">
+            <div class="text-[14px]">
+              想从 0 到 1 快速落地，就先完成本指南的“极速起步 + 部署 + 域名”，然后逐步加上评论、搜索与分析。
+              保持“内容为先、技术为辅”，站点会越用越顺手。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="mt-10">
+        <div class="relative overflow-hidden rounded-3xl border border-white/10">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#7aa2ff]/15 to-[#22d3ee]/15"></div>
+          <div class="relative p-8 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+              <h3 class="text-2xl md:text-3xl font-bold tracking-tight">准备好了？现在就把博客跑起来</h3>
+              <p class="mt-3 text-white/80">
+                从复制一段代码到成功上线，只差一次提交。遇到问题可对照本页排查清单与 FAQ。
+              </p>
+              <div class="mt-5 flex flex-wrap gap-3">
+                <a href="#quickstart" class="inline-flex items-center gap-2 rounded-2xl bg-white text-[#06121f] px-5 py-3 font-semibold shadow-soft">
+                  回到快速起步
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </a>
+                <a href="#templates" class="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-5 py-3 hover:bg-white/10">
+                  查看模板与代码
+                </a>
+              </div>
+              <div class="mt-4 flex flex-wrap items-center gap-2 text-[12px] text-white/70">
+                <span class="badge">可复制代码</span>
+                <span class="pill">含国内访问优化</span>
+                <span class="badge">Astro & Hugo 双栈</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-[#0b1017] p-5">
+              <div class="text-[13px] text-white/60">上线后的三件事</div>
+              <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
+                <div class="mini-card p-3">
+                  <div class="text-white/60">1</div>
+                  <div class="mt-1 text-white/80">提交 <code>sitemap.xml</code> 到搜索控制台</div>
+                </div>
+                <div class="mini-card p-3">
+                  <div class="text-white/60">2</div>
+                  <div class="mt-1 text-white/80">开启评论（Giscus）与 RSS</div>
+                </div>
+                <div class="mini-card p-3">
+                  <div class="text-white/60">3</div>
+                  <div class="mt-1 text-white/80">添加 Pagefind 搜索与分析脚本</div>
+                </div>
+              </div>
+
+              <div class="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-[12px] text-white/70">
+                提示：保持小步快跑与持续写作，技术会越来越顺手。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer note -->
+      <section class="mt-8">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-[12px] text-white/60">
+          本页为一份面向个人博客的实操指南，不涉及任何账号隐私信息。
+          所有示例代码均可直接复制使用。若遇到与你环境不一致的情况，请对照 FAQ 与核对清单排查。
+        </div>
+      </section>
+    </article>
+
+    <!-- Right panel -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-24 space-y-4">
+        <!-- Progress -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="flex items-center justify-between">
+            <div class="text-[12px] text-white/60">阅读进度</div>
+            <div id="progress-text" class="text-[12px] text-white/80">0%</div>
+          </div>
+          <div class="mt-2 h-2 w-full rounded-full bg-white/10 overflow-hidden">
+            <div id="progress-bar" class="h-full w-0 bg-gradient-to-r from-[#7aa2ff] to-[#22d3ee]"></div>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-2 text-[12px]">
+            <button id="back-to-top" class="rounded-lg border border-white/10 bg-white/5 py-1.5 hover:bg-white/10">回到顶部</button>
+            <button id="copy-link" class="rounded-lg border border-white/10 bg-white/5 py-1.5 hover:bg-white/10">复制本页链接</button>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-[13px] font-semibold">常用代码</div>
+          <div class="mt-3 space-y-2">
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 text-[13px] copy-btn" data-copy="#q1">复制 Astro 初始化</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 text-[13px] copy-btn" data-copy="#q4">复制 Git 推送命令</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 text-[13px] copy-btn" data-copy="#astro-base">复制 Base 布局</button>
+            <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 text-[13px] copy-btn" data-copy="#robots-txt">复制 robots.txt</button>
+          </div>
+        </div>
+
+        <!-- Status card -->
+        <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-[#7aa2ff]/10 to-[#22d3ee]/10 p-4">
+          <div class="text-[13px] font-semibold">小抄</div>
+          <ul class="mt-2 space-y-2 text-[13px] text-white/80 list-disc list-inside">
+            <li>构建：<code>npm run build</code></li>
+            <li>输出：Astro → <code>dist</code> / Hugo → <code>public</code></li>
+            <li>域名：Pages → Custom domains</li>
+            <li>评论：Giscus（零后端）</li>
+            <li>搜索：Pagefind（静态）</li>
+          </ul>
+          <div class="mt-3 text-[11px] text-white/60">想更省心：先上 Giscus + RSS，其他按需添加。</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Mobile TOC Drawer -->
+  <div id="toc-drawer" class="lg:hidden fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="absolute inset-y-0 left-0 w-[86%] max-w-[380px] bg-[#0c1016] border-r border-white/10 p-5 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <div class="text-[14px] font-semibold">目录</div>
+        <button id="close-toc" class="h-8 w-8 rounded-lg border border-white/10 bg-white/5 grid place-items-center hover:bg-white/10">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <nav class="mt-4 toc">
+        <ul class="space-y-2 text-[14px]">
+          <li><a href="#overview">概览：方案与能力</a></li>
+          <li><a href="#quickstart">极速起步（15分钟）</a></li>
+          <li><a href="#structure">站点结构与文件组织</a></li>
+          <li><a href="#markdown">Markdown 写作规范</a></li>
+          <li><a href="#deploy">部署到 Cloudflare Pages</a></li>
+          <li><a href="#domain">绑定自定义域名与HTTPS</a></li>
+          <li><a href="#features">评论｜搜索｜订阅｜分析</a></li>
+          <li><a href="#templates">模板：Astro / Hugo 最小可用</a></li>
+          <li><a href="#seo">SEO 与站点地图</a></li>
+          <li><a href="#perf">性能与缓存策略</a></li>
+          <li><a href="#china">可选：国内访问优化</a></li>
+          <li><a href="#ops">运维、备份与故障处理</a></li>
+          <li><a href="#migration">从其他平台迁移</a></li>
+          <li><a href="#checklist">上线核对清单</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#resources">进阶资源</a></li>
+        </ul>
+      </nav>
+
+      <div class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="text-[12px] text-white/60">快速复制</div>
+        <div class="mt-3 space-y-2 text-[12px]">
+          <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#cf-pages-build">复制 Pages 构建命令</button>
+          <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#wrangler-json">复制 wrangler.json</button>
+          <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#robots-txt">复制 robots.txt</button>
+          <button class="w-full text-left rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10 copy-btn" data-copy="#sitemap-xml">复制 sitemap.xml</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-5 left-1/2 z-[70] hidden -translate-x-1/2">
+    <div class="rounded-2xl border border-white/15 bg-[#0e141c] px-4 py-2 text-[13px] text-white shadow-2xl">
+      已复制到剪贴板
+    </div>
+  </div>
+
+  <footer class="border-t border-white/10 mt-12">
+    <div class="mx-auto max-w-7xl px-4 py-8 text-[13px] text-white/60">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <p>© <span id="year"></span> 个人博客 · 基于 Cloudflare Pages 的实操指南 • 由 Anonymous AI 生成</p>
+        <div class="flex items-center gap-4">
+          <a href="#top" class="hover:text-white">回到顶部</a>
+          <a href="#quickstart" class="hover:text-white">快速起步</a>
+          <a href="#faq" class="hover:text-white">FAQ</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Mobile TOC drawer
+  const toc = document.getElementById('toc-drawer');
+  const openToc = document.getElementById('open-toc');
+  const closeToc = document.getElementById('close-toc');
+  openToc?.addEventListener('click', () => toc?.classList.remove('hidden'));
+  closeToc?.addEventListener('click', () => toc?.classList.add('hidden'));
+  toc?.addEventListener('click', (e) => {
+    if (e.target === toc) toc.classList.add('hidden');
+  });
+
+  // Smooth close TOC on link click (mobile)
+  toc?.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', ()=> toc.classList.add('hidden'));
+  });
+
+  // Copy buttons
+  const toast = document.getElementById('toast');
+  function showToast(msg='已复制到剪贴板') {
+    toast.querySelector('div').textContent = msg;
+    toast.classList.remove('hidden');
+    toast.style.opacity = '1';
+    toast.style.transform = 'translate(-50%, 0)';
+    setTimeout(()=>{
+      toast.style.opacity = '0';
+      toast.style.transform = 'translate(-50%, 10px)';
+    }, 1200);
+    setTimeout(()=> toast.classList.add('hidden'), 1600);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast();
+    } catch (e) {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast();
+    }
+  }
+
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', async () => {
+      const target = btn.getAttribute('data-copy');
+      if (!target) return;
+      const el = document.querySelector(target);
+      if (!el) return;
+      // If it's a <pre> or code block, get innerText
+      let txt = '';
+      if (el.tagName === 'PRE' || el.tagName === 'CODE' || el.querySelector('code') || el.querySelector('pre')) {
+        txt = el.innerText;
+      } else {
+        txt = el.textContent || '';
+      }
+      await copyText(txt.trim());
+    });
+  });
+
+  // Back to top
+  document.getElementById('back-to-top')?.addEventListener('click', ()=>{
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Copy page link
+  document.getElementById('copy-link')?.addEventListener('click', async ()=>{
+    await copyText(window.location.href);
+  });
+
+  // Progress bar
+  const progressBar = document.getElementById('progress-bar');
+  const progressText = document.getElementById('progress-text');
+  const mainArticle = document.querySelector('main article');
+  function updateProgress(){
+    const start = mainArticle ? mainArticle.offsetTop : 0;
+    const end = (mainArticle ? (mainArticle.offsetTop + mainArticle.offsetHeight) : document.body.scrollHeight) - window.innerHeight;
+    const raw = (window.scrollY - start) / Math.max(1, end - start);
+    const p = Math.max(0, Math.min(1, raw));
+    const pct = Math.round(p * 100);
+    progressBar.style.width = pct + '%';
+    progressText.textContent = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // Simple active section highlight (left TOC)
+  const sections = [...document.querySelectorAll('main article section[id]')];
+  const tocLinks = [...document.querySelectorAll('aside .toc a')];
+  const idToLink = new Map();
+  tocLinks.forEach(a=>{
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('#')) idToLink.set(href.slice(1), a);
+  });
+
+  function setActive(id){
+    tocLinks.forEach(a => a.classList.remove('font-semibold','text-white'));
+    const a = idToLink.get(id);
+    if (a) {
+      a.classList.add('font-semibold','text-white');
+    }
+  }
+
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        if (id) setActive(id);
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
