@@ -6,6 +6,14 @@
   url: https://by.yx520.love
   src: life
 
+- name: 收发邮件（zxyzxy）
+  url: https://smtp.6qu.cc
+  src: life
+
+- name: 收发邮件（zxy）
+  url: https://mail.tal.ccwu.cc
+  src: life
+
 - name: Alvin9999
   url: https://github.com/Alvin9999-newpac/fanqiang/wiki
   src: life
