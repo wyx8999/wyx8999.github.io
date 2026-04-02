@@ -1,6 +1,6 @@
 # 基于 Jekyll 构建的个人博客模板
 
-Fork 自 [mzlogin/mzlogin.github.io](https://github.com/mzlogin/mzlogin.github.io) 并完成 **98 项个性化功能迭代**，适配 GitHub Pages 一键部署，支持博客文章、维基知识库、碎片笔记、图片画廊等多形态内容展示，已稳定运行并持续更新。
+Fork 自 [mzlogin/mzlogin.github.io](https://github.com/mzlogin/mzlogin.github.io) 并完成 **98 项个性化功能迭代**，适配 GitHub Pages 一键部署，支持博客文章、维基知识库、碎片笔记、图片画廊等多形态内容展示，已稳定运行并持续更新。 
 
 博客线上地址：[https://zxy6.indevs.in](https://zxy6.indevs.in)  
 欢迎 Star / Fork 二次开发，保留原作者协议即可。
