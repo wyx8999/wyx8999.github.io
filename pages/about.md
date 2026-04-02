@@ -2,13 +2,13 @@
 layout: page
 title: About
 description: 打码改变世界
-keywords: 司机C
+keywords: callen
 comments: true
 menu: 关于
 permalink: /about/
 ---
 
-我是司机C，码而生，码而立。
+我是Cedric，码而生，码而立。
 
 仰慕「优雅编码的艺术」。
 
