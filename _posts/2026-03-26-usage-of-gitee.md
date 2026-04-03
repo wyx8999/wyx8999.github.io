@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Git 与 Gitee 结合使用：从安装到代码提交全流程
-categories: Gitee
+title: Git 与 Gitee/Github 结合使用：从安装到代码提交全流程
+categories: Git
 description: 在第一次使用gitee交作业中，了解使用gitee
-keyword: Gitee, ssh
+keyword: Git, ssh
 ---
 
-在日常开发中，Git 是必不可少的版本控制工具，Gitee（码云）则是国内稳定高效的代码托管平台。本文将带你一步步完成 **Git 安装、SSH 配置、Gitee 仓库创建、本地代码提交与推送**，实现本地与远程仓库的无缝协作。
+在日常开发中，Git 是必不可少的版本控制工具，Gitee（码云）则是国内稳定高效的代码托管平台。本文将带你一步步完成 **Git 安装、SSH 配置、Gitee 仓库创建、本地代码提交与推送**，实现本地与远程仓库的无缝协作。同样适用与Github。
 
 ## 一、Git 安装与环境配置
 
