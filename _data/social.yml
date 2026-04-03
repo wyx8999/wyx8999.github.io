@@ -9,7 +9,11 @@
 - sitename: 稀土掘金
   name: zxy
   url: https://juejin.cn/user/1998280531390042
-  
+
+- sitename: tiktok
+  name: jvn_jie
+  url: https://www.tiktok.com/@jvn_jie?is_from_webapp=1&sender_device=pc
+
 - sitename: 邮箱
   name: zxy
   url: mailto:zxy@zxy6.eu.cc
