@@ -10,12 +10,16 @@
   url: https://jyd.yuxian.xyz/
   src: life
 
-- name: 收发邮件（zxyzxy）
-  url: https://smtp.6qu.cc
+- name: Cedric's pansearch
+  url: https://filex.eu.cc/
   src: life
 
-- name: 收发邮件（zxy）
-  url: https://mail.tal.ccwu.cc
+- name: NewsHub
+  url: https://newshub.shenzjd.com/
+  src: life
+
+- name: 收发邮件（zxyzxy）
+  url: https://smtp.6qu.cc
   src: life
 
 - name: Alvin9999
