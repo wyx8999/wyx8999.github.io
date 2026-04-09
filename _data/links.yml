@@ -26,10 +26,6 @@
   url: https://github.com/Alvin9999-newpac/fanqiang/wiki
   src: life
 
-- name: Alv大陆站
-  url: https://3github.com/Alvin9999-newpac/fanqiang/wiki
-  src: life 
-
 - name: Alv_gitlab
   url: https://gitlab.com/zhifan999/fq/-/wikis
   src: life
@@ -37,10 +33,6 @@
 - name: Alv_Free Air
   url: https://alvin9999.com
   src: life 
-
-- name: Connie 酱
-  url: https://connie99.github.io
-  src: life
 
 - name: 只宁静不致远
   url: http://zxning.github.io
@@ -50,24 +42,16 @@
   url: http://chenxiaoyoyo.github.io
   src: life
 
-- name: 日新亭
-  url: http://www.fengerzh.com/
+- name: 码志
+  url: https://mazhuang.org/
   src: life
 
 - name: wanandroid
   url: http://www.wanandroid.com/
   src: life
 
-- name: ZZY补完计划
-  url: https://zzycreate.github.io/
-  src: life
-
 - name: 村农
   url: http://www.why-dong.com/
-  src: life
-
-- name: 求生之路
-  url: http://blog.xiaolaoni.xin/
   src: life
 
 - name: 董小姐的草原
@@ -78,28 +62,12 @@
   url: https://yuchao.wang/
   src: www
 
-- name: 水寒的博客
-  url: https://dp2px.com
-  src: www
-
 - name: 孙不服的博客
   url: https://sunbufu.github.io/
   src: www
 
 - name: HwiLu's 博客
   url: https://hwilu.github.io/
-  src: www
-
-- name: 有次博客
-  url: http://you.ci/
-  src: www
-
-- name: 呓城之城
-  url: http://yicheng.zdyrs.com/
-  src: www
-
-- name: 秦大圣的博客
-  url: https://qinjisheng.top/
   src: www
 
 - name: 极客玩家大白
@@ -110,16 +78,8 @@
   url: https://hiwannz.com
   src: www
 
-- name: 梦境迷离
-  url: https://dreamylost.cn
-  src: www
-
 - name: river's blog
   url: https://www.river106.cn
-  src: www
-
-- name: lanruixiang
-  url: https://lanruixiang.github.io/
   src: www
 
 - name: lch2010
