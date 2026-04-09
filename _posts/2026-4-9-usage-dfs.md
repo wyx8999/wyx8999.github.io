@@ -49,7 +49,7 @@ void dfs(int u) {
     // 递归出口：已填完所有位，输出结果  
     if (u > n) {  
         for (int i = 1; i <= n; ++i)  
-            cout << path\[i\] << " ";  
+            cout << path[i] << " ";  
         cout << endl;  
         return;  
     }  
