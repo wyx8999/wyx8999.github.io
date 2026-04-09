@@ -1,6 +1,6 @@
 ---
 layout: post
-tltle: 清除 GitHub 上的幽灵通知
+tltle: 学习 DFS
 categories: DFS
 description: 对DFS的理解和学习
 keywords: DFS
@@ -39,8 +39,8 @@ keywords: DFS
 using namespace std;  
   
 const int N = 10;  
-int path\[N\];    // 存储当前排列  
-bool state\[N\];  // 标记数字是否已使用  
+int path[N];    // 存储当前排列  
+bool state[N];  // 标记数字是否已使用  
 int n;  
   
 // u：当前正在填第几位  
@@ -54,11 +54,11 @@ void dfs(int u) {
     }  
     // 枚举所有可选数字  
     for (int i = 1; i <= n; ++i) {  
-        if (!state\[i\]) {  
-            path\[u\] = i;       // 选择i  
-            state\[i\] = true;  // 标记已用  
+        if (!state[i]) {  
+            path[u] = i;       // 选择i  
+            state[i] = true;  // 标记已用  
             dfs(u + 1);       // 递归下一位  
-            state\[i\] = false; // 回溯：撤销选择  
+            state[i] = false; // 回溯：撤销选择  
         }  
     }  
 }  
@@ -91,7 +91,7 @@ int main() {
 
 ## 五、DFS 适用场景
 
--   ****组合枚举****：全排列、子集、组合数；
--   ****路径搜索****：迷宫、两点是否连通、找任意一条路径；
--   ****回溯问题****：N 皇后、数独、括号生成；
--   ****图 / 树遍历****：连通分量、拓扑排序、判环、前 / 中 / 后序遍历。
+-   **组合枚举**：全排列、子集、组合数；
+-   **路径搜索**：迷宫、两点是否连通、找任意一条路径；
+-   **回溯问题**：N 皇后、数独、括号生成；
+-   **图 / 树遍历**：连通分量、拓扑排序、判环、前 / 中 / 后序遍历。
