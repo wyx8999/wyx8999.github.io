@@ -1,10 +1,11 @@
 ---
 layout: post
-tltle: 学习 DFS
+title: 学习 DFS
 categories: DFS
 description: 对DFS的理解和学习
-keywords: DFS
+keyword: DFS
 ---
+
 
 深度优先搜索（DFS）是遍历树、图、状态空间的基础算法，核心是**一条路走到底，走不通就回溯，换条路继续探索**，天然适配递归与回溯思想，是全排列、组合、迷宫、N 皇后等问题的通用解法。
 
