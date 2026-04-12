@@ -26,6 +26,10 @@
   url: https://newshub.shenzjd.com/
   src: life
 
+- name: 每日一图
+  url: https://bing.hitodev.com/
+  src: life
+
 - name: 收发邮件（zxyzxy）
   url: https://smtp.6qu.cc
   src: life
