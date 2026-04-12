@@ -10,8 +10,16 @@
   url: https://jyd.yuxian.xyz/
   src: life
 
+- name: Cedric‘s mirrors
+  url: mirror6.eu.cc
+  src: life
+  
 - name: Cedric's pansearch
   url: https://filex.eu.cc/
+  src: life
+
+- name: Cedric‘s translation
+  url: https://translate.ciuik.cn/
   src: life
 
 - name: NewsHub
@@ -57,6 +65,10 @@
 - name: 董小姐的草原
   url: https://candy961.github.io/
   src: life
+
+- name: 清羽飞扬
+  url: https://blog.liushen.fun/
+  src: www
 
 - name: 王玉超
   url: https://yuchao.wang/
