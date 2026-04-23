@@ -1,4 +1,4 @@
-- name: Cedric的世界
+- name: Cedric的学习博客
   url: https://zxy6.indevs.in
   src: life
 
@@ -25,9 +25,13 @@
 - name: Cedric‘s TV
   url: https://tv.madebi.cn/
   src: life
+  
+- name: Cedric‘s 日常博客
+  url: https://cedric.爱.site/
+  src: life
 
 - name: Cedric‘s 监测
-  url: https://jyd.cc.cd/
+  url: https://monitor.jyd.cc.cd/
   src: life
 
 - name: Cedric‘s 通讯
@@ -40,6 +44,10 @@
 
 - name: 每日一图
   url: https://bing.hitodev.com/
+  src: life
+
+- name: sy
+  url: https://1.zxy.giize.com/
   src: life
 
 - name: 收发邮件（zxyzxy）
