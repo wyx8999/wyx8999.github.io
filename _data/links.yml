@@ -2,6 +2,10 @@
   url: https://zxy6.indevs.in
   src: life
 
+- name: Cedric的日常博客
+  url: https://blog.cedric.fnrry.com
+  src: life
+
 - name: Cedric的图床
   url: https://by.yx520.love
   src: life
@@ -26,7 +30,7 @@
   url: https://tv.madebi.cn/
   src: life
   
-- name: Cedric‘s 日常博客
+- name: Cedric‘s 个人主页
   url: https://cedric.爱.site/
   src: life
 
